@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/master.swiftdeps"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/Tests/File2FileTests/File2FileTests.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/File2FileTests.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/File2FileTests.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/File2FileTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/File2FileTests.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/File2FileTests.build/File2FileTests.dia"
+  }
+}

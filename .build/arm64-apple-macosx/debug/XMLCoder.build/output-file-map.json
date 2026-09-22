@@ -1,0 +1,348 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/master.swiftdeps"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Attribute.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Attribute.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Attribute.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Attribute~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Attribute.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Attribute.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/BoolBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/BoolBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/BoolBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/BoolBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/BoolBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/BoolBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/Box.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Box.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Box.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Box~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Box.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Box.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/ChoiceBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ChoiceBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ChoiceBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ChoiceBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ChoiceBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ChoiceBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/DataBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DataBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DataBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DataBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DataBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DataBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/DateBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DateBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DateBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DateBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DateBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DateBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/DecimalBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecimalBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecimalBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecimalBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecimalBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecimalBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/DoubleBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DoubleBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DoubleBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DoubleBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DoubleBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DoubleBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/FloatBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/FloatBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/FloatBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/FloatBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/FloatBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/FloatBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/IntBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/IntBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/IntBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/IntBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/IntBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/IntBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/KeyedBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/NullBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/NullBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/NullBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/NullBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/NullBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/NullBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/SharedBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SharedBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SharedBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SharedBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SharedBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SharedBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/SingleKeyedBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleKeyedBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleKeyedBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleKeyedBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleKeyedBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleKeyedBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/StringBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/StringBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/StringBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/StringBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/StringBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/StringBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/UIntBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UIntBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UIntBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UIntBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UIntBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UIntBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/URLBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/URLBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/URLBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/URLBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/URLBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/URLBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/UnkeyedBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UnkeyedBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UnkeyedBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UnkeyedBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UnkeyedBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/UnkeyedBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Box/ValueBox.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ValueBox.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ValueBox.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ValueBox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ValueBox.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ValueBox.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Element.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Element.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Element.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Element~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Element.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Element.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/ElementAndAttribute.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ElementAndAttribute.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ElementAndAttribute.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ElementAndAttribute~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ElementAndAttribute.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ElementAndAttribute.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/ISO8601DateFormatter.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ISO8601DateFormatter.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ISO8601DateFormatter.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ISO8601DateFormatter~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ISO8601DateFormatter.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/ISO8601DateFormatter.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/KeyedStorage.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedStorage.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedStorage.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedStorage~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedStorage.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/KeyedStorage.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/Metatypes.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Metatypes.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Metatypes.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Metatypes~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Metatypes.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/Metatypes.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/String+Extensions.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/String+Extensions.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/String+Extensions.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/String+Extensions~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/String+Extensions.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/String+Extensions.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/XMLChoiceCodingKey.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceCodingKey.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceCodingKey.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceCodingKey~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceCodingKey.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceCodingKey.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/XMLCoderElement.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLCoderElement.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLCoderElement.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLCoderElement~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLCoderElement.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLCoderElement.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/XMLHeader.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLHeader.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLHeader.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLHeader~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLHeader.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLHeader.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/XMLKey.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKey.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKey.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKey~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKey.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKey.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Auxiliaries/XMLStackParser.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLStackParser.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLStackParser.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLStackParser~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLStackParser.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLStackParser.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/DecodingErrorExtension.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecodingErrorExtension.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecodingErrorExtension.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecodingErrorExtension~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecodingErrorExtension.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DecodingErrorExtension.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/DynamicNodeDecoding.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeDecoding.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeDecoding.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeDecoding~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeDecoding.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeDecoding.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/SingleValueDecodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueDecodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueDecodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueDecodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueDecodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueDecodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLChoiceDecodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceDecodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceDecodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceDecodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceDecodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceDecodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLDecoder.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoder.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoder.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoder~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoder.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoder.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLDecoderImplementation.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoderImplementation.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoderImplementation.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoderImplementation~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoderImplementation.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecoderImplementation.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLDecodingStorage.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecodingStorage.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecodingStorage.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecodingStorage~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecodingStorage.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLDecodingStorage.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLKeyedDecodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedDecodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedDecodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedDecodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedDecodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedDecodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Decoder/XMLUnkeyedDecodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedDecodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedDecodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedDecodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedDecodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedDecodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/DynamicNodeEncoding.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeEncoding.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeEncoding.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeEncoding~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeEncoding.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/DynamicNodeEncoding.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/EncodingErrorExtension.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/EncodingErrorExtension.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/EncodingErrorExtension.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/EncodingErrorExtension~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/EncodingErrorExtension.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/EncodingErrorExtension.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/SingleValueEncodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueEncodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueEncodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueEncodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueEncodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/SingleValueEncodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLChoiceEncodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceEncodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceEncodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceEncodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceEncodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLChoiceEncodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLEncoder.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoder.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoder.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoder~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoder.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoder.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLEncoderImplementation.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoderImplementation.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoderImplementation.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoderImplementation~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoderImplementation.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncoderImplementation.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLEncodingStorage.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncodingStorage.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncodingStorage.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncodingStorage~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncodingStorage.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLEncodingStorage.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLKeyedEncodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedEncodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedEncodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedEncodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedEncodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLKeyedEncodingContainer.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLReferencingEncoder.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLReferencingEncoder.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLReferencingEncoder.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLReferencingEncoder~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLReferencingEncoder.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLReferencingEncoder.dia"
+  },
+  "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/checkouts/XMLCoder/Sources/XMLCoder/Encoder/XMLUnkeyedEncodingContainer.swift": {
+    "dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedEncodingContainer.d",
+    "object": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedEncodingContainer.swift.o",
+    "swiftmodule": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedEncodingContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedEncodingContainer.swiftdeps",
+    "diagnostics": "/Users/alfianhaniffy/INFORMATIKA/FIle2File/.build/arm64-apple-macosx/debug/XMLCoder.build/XMLUnkeyedEncodingContainer.dia"
+  }
+}

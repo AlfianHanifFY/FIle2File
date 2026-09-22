@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug File2File",
+            "program": "${workspaceFolder}/.build/debug/File2File",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "swift build"
+        }
+    ]
+}

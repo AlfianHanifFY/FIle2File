@@ -17,6 +17,7 @@ public struct ImageCompressorToolView: View {
     
     @State private var isProcessingAll: Bool = false
     @State private var statusMessage: String? = nil
+    @State private var currentCompressionTask: Task<Void, Never>? = nil
     
     public init() {}
     
@@ -63,13 +64,15 @@ public struct ImageCompressorToolView: View {
             if !imageItems.isEmpty {
                 HStack(spacing: 10) {
                     Button(action: addMoreFiles) {
-                        Label("Add Images", systemImage: "plus.circle")
+                        Label("Add", systemImage: "plus.circle")
                     }
+                    .help("Add images from disk")
                     
                     Button(action: clearAll) {
-                        Label("Clear All", systemImage: "trash")
+                        Label("Clear", systemImage: "trash")
                     }
                     .foregroundColor(.red)
+                    .help("Clear all images")
                 }
             }
         }
@@ -95,7 +98,7 @@ public struct ImageCompressorToolView: View {
                 title: "Drag & Drop Image Files Here",
                 subtitle: "Supports JPEG, PNG, HEIC, WebP, TIFF, and BMP images",
                 iconName: "photo.on.rectangle.angled",
-                buttonTitle: "Browse Image Files...",
+                buttonTitle: "Browse",
                 onBrowse: openFilePicker,
                 onDropFiles: { urls in
                     self.loadURLs(urls)
@@ -118,7 +121,7 @@ public struct ImageCompressorToolView: View {
             HStack(spacing: 0) {
                 if imageItems.count > 1 {
                     batchSidebarView
-                        .frame(width: 240)
+                        .frame(minWidth: 200, idealWidth: 240, maxWidth: 280)
                     Divider()
                 }
                 
@@ -171,6 +174,7 @@ public struct ImageCompressorToolView: View {
                 .labelsHidden()
                 .pickerStyle(.menu)
                 .frame(width: 185)
+                .onChange(of: mode) { triggerCompressionAll() }
             }
             
             Divider()
@@ -200,6 +204,7 @@ public struct ImageCompressorToolView: View {
                 .labelsHidden()
                 .pickerStyle(.menu)
                 .frame(width: 140)
+                .onChange(of: outputFormat) { triggerCompressionAll() }
             }
             
             Spacer(minLength: 0)
@@ -210,6 +215,7 @@ public struct ImageCompressorToolView: View {
         HStack(spacing: 14) {
             Toggle("Limit Max Dimension:", isOn: $enableMaxDimension)
                 .font(.caption)
+                .onChange(of: enableMaxDimension) { triggerCompressionAll() }
             
             if enableMaxDimension {
                 HStack(spacing: 6) {
@@ -217,6 +223,8 @@ public struct ImageCompressorToolView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 65)
                         .font(.caption)
+                        .onSubmit { triggerCompressionAll(debounceMs: 0) }
+                        .onChange(of: maxDimensionValue) { triggerCompressionAll(debounceMs: 300) }
                     
                     Text("px")
                         .font(.caption)
@@ -231,20 +239,21 @@ public struct ImageCompressorToolView: View {
                         Text("Presets")
                             .font(.caption)
                     }
-                    .menuStyle(.borderlessButton)
+                    .menuStyle(.automatic)
                     .fixedSize()
                 }
             }
             
             Spacer()
             
-            Button(action: triggerCompressionAll) {
-                Label(isProcessingAll ? "Compressing..." : "Apply Compression", systemImage: "bolt.fill")
+            Button(action: { triggerCompressionAll() }) {
+                Label(isProcessingAll ? "Processing..." : "Compress", systemImage: "bolt.fill")
                     .font(.headline)
                     .padding(.horizontal, 12)
             }
             .buttonStyle(.borderedProminent)
             .disabled(isProcessingAll)
+            .help("Compress all images")
         }
     }
     
@@ -279,7 +288,7 @@ public struct ImageCompressorToolView: View {
                     Text("Presets")
                         .font(.caption)
                 }
-                .menuStyle(.borderlessButton)
+                .menuStyle(.automatic)
                 .fixedSize()
             }
         }
@@ -295,6 +304,8 @@ public struct ImageCompressorToolView: View {
                 TextField("500", text: $targetSizeValue)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 60)
+                    .onSubmit { triggerCompressionAll(debounceMs: 0) }
+                    .onChange(of: targetSizeValue) { triggerCompressionAll(debounceMs: 300) }
                 
                 Picker("Unit", selection: $targetSizeUnit) {
                     ForEach(TargetSizeUnit.allCases) { unit in
@@ -304,6 +315,7 @@ public struct ImageCompressorToolView: View {
                 .labelsHidden()
                 .pickerStyle(.menu)
                 .frame(width: 65)
+                .onChange(of: targetSizeUnit) { triggerCompressionAll() }
                 
                 Menu {
                     Button("200 KB") { targetSizeValue = "200"; targetSizeUnit = .kb; triggerCompressionAll() }
@@ -314,7 +326,7 @@ public struct ImageCompressorToolView: View {
                     Text("Presets")
                         .font(.caption)
                 }
-                .menuStyle(.borderlessButton)
+                .menuStyle(.automatic)
                 .fixedSize()
             }
         }
@@ -411,15 +423,17 @@ public struct ImageCompressorToolView: View {
             HStack(spacing: 12) {
                 if selectedItem?.compressedData != nil {
                     Button(action: saveSingleSelected) {
-                        Label("Save Current Image...", systemImage: "square.and.arrow.down")
+                        Label("Save", systemImage: "square.and.arrow.down")
                     }
+                    .help("Save current selected image")
                 }
                 
                 if imageItems.contains(where: { $0.compressedData != nil }) {
                     Button(action: saveAllImages) {
-                        Label("Save All Images...", systemImage: "folder.badge.plus")
+                        Label("Save", systemImage: "folder.badge.plus")
                     }
                     .buttonStyle(.borderedProminent)
+                    .help("Save all compressed images")
                 }
             }
         }
@@ -441,18 +455,36 @@ public struct ImageCompressorToolView: View {
         )
     }
     
-    private func triggerCompressionAll() {
+    private func triggerCompressionAll(debounceMs: Int = 0) {
         guard !imageItems.isEmpty else { return }
         
-        let config = currentConfig()
-        isProcessingAll = true
+        currentCompressionTask?.cancel()
         
-        Task {
+        if mode == .byTargetSize {
+            let cleanText = targetSizeValue.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: ",", with: ".")
+            guard let val = Double(cleanText), val > 0 else { return }
+        }
+        
+        currentCompressionTask = Task {
+            if debounceMs > 0 {
+                try? await Task.sleep(nanoseconds: UInt64(debounceMs) * 1_000_000)
+            }
+            guard !Task.isCancelled else { return }
+            
+            await MainActor.run {
+                self.isProcessingAll = true
+            }
+            
+            let config = currentConfig()
             var updatedList: [ImageItem] = []
+            
             for item in imageItems {
+                guard !Task.isCancelled else { return }
                 let compressed = await ImageCompressor.compress(item, config: config)
                 updatedList.append(compressed)
             }
+            
+            guard !Task.isCancelled else { return }
             
             await MainActor.run {
                 self.imageItems = updatedList

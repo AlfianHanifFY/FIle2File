@@ -15,7 +15,7 @@ public struct FileDropZoneCardView: View {
         title: String = "Drag & Drop your file here",
         subtitle: String = "Choose or drop a file to get started",
         iconName: String = "arrow.down.doc.fill",
-        buttonTitle: String = "Browse Files...",
+        buttonTitle: String = "Browse",
         onBrowse: @escaping () -> Void,
         onDropFiles: @escaping ([URL]) -> Void
     ) {
@@ -60,6 +60,7 @@ public struct FileDropZoneCardView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.regular)
+                .help("Browse files on disk")
             }
         }
         .contentShape(Rectangle())

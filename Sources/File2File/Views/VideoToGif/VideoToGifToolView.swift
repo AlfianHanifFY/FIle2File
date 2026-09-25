@@ -64,13 +64,15 @@ public struct VideoToGifToolView: View {
             if item != nil {
                 HStack(spacing: 10) {
                     Button(action: openFilePicker) {
-                        Label("Change Video", systemImage: "arrow.triangle.2.circlepath")
+                        Label("Change", systemImage: "arrow.triangle.2.circlepath")
                     }
+                    .help("Change source video")
                     
                     Button(action: clearVideo) {
                         Label("Clear", systemImage: "trash")
                     }
                     .foregroundColor(.red)
+                    .help("Clear video")
                 }
             }
         }
@@ -96,7 +98,7 @@ public struct VideoToGifToolView: View {
                 title: "Drag & Drop Video File Here",
                 subtitle: "Supports MP4, MOV, M4V, and AVI video formats",
                 iconName: "video.badge.plus",
-                buttonTitle: "Browse Video File...",
+                buttonTitle: "Browse",
                 onBrowse: openFilePicker,
                 onDropFiles: { urls in
                     if let first = urls.first {
@@ -211,7 +213,8 @@ public struct VideoToGifToolView: View {
                         Text("24 FPS (Smooth)").tag(24)
                         Text("30 FPS (High)").tag(30)
                     }
-                    .frame(width: 160)
+                    .labelsHidden()
+                    .frame(minWidth: 140, idealWidth: 160)
                 }
                 
                 // Resolution Scale
@@ -228,7 +231,8 @@ public struct VideoToGifToolView: View {
                             Text(res.rawValue).tag(res)
                         }
                     }
-                    .frame(width: 150)
+                    .labelsHidden()
+                    .frame(minWidth: 140, idealWidth: 160)
                 }
                 
                 // Speed Multiplier
@@ -249,7 +253,8 @@ public struct VideoToGifToolView: View {
                         Text("2.0x (Fast)").tag(2.0)
                         Text("3.0x (Hyper)").tag(3.0)
                     }
-                    .frame(width: 140)
+                    .labelsHidden()
+                    .frame(minWidth: 120, idealWidth: 140)
                 }
                 
                 Spacer()
@@ -257,7 +262,7 @@ public struct VideoToGifToolView: View {
                 // Convert Button
                 Button(action: convertToGif) {
                     Label(
-                        item.isConverting ? "Converting..." : "Convert to GIF",
+                        item.isConverting ? "Converting..." : "Convert",
                         systemImage: "sparkles"
                     )
                     .font(.headline)
@@ -266,6 +271,8 @@ public struct VideoToGifToolView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(item.isConverting)
+                .help("Convert video to animated GIF")
+                .fixedSize(horizontal: true, vertical: false)
             }
             
             if item.isConverting {
@@ -293,6 +300,7 @@ public struct VideoToGifToolView: View {
                     Text(tab.rawValue).tag(tab)
                 }
             }
+            .labelsHidden()
             .pickerStyle(.segmented)
             .frame(width: 280)
             
@@ -419,10 +427,11 @@ public struct VideoToGifToolView: View {
             
             if item.gifData != nil {
                 Button(action: saveGifFile) {
-                    Label("Save GIF As...", systemImage: "square.and.arrow.down")
+                    Label("Save", systemImage: "square.and.arrow.down")
                         .font(.headline)
                 }
                 .buttonStyle(.borderedProminent)
+                .help("Save generated GIF file")
             }
         }
     }

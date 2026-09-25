@@ -54,14 +54,16 @@ public struct SettingsView: View {
                         Spacer()
 
                         Button(action: { settings.chooseDirectory() }) {
-                            Label("Choose Directory...", systemImage: "ellipsis.circle")
+                            Label("Choose", systemImage: "ellipsis.circle")
                         }
                         .buttonStyle(.borderedProminent)
+                        .help("Choose output directory")
 
                         Button(action: openDirectoryInFinder) {
-                            Label("Open Folder", systemImage: "arrow.up.forward.app")
+                            Label("Open", systemImage: "arrow.up.forward.app")
                         }
                         .buttonStyle(.bordered)
+                        .help("Open output folder in Finder")
                         
                         Button(action: { settings.resetOutputDirectory() }) {
                             Text("Reset")
@@ -101,6 +103,7 @@ public struct SettingsView: View {
                             Text(mode.rawValue).tag(mode.rawValue)
                         }
                     }
+                    .labelsHidden()
                     .pickerStyle(.segmented)
                     .frame(maxWidth: 400)
                 }

@@ -7,8 +7,22 @@ public struct SchemaInputStepView: View {
     let onNextStep: () -> Void
     let onPrevStep: () -> Void
 
-    @State private var parsedSchema: ParsedSchema? = nil
-    @State private var parseError: String? = nil
+    @State private var validationResult: Result<ParsedSchema, DDLParseError>? = nil
+    @State private var isChecked: Bool = false
+
+    private var parsedSchema: ParsedSchema? {
+        if case .success(let schema) = validationResult {
+            return schema
+        }
+        return nil
+    }
+
+    private var parseError: String? {
+        if case .failure(let err) = validationResult {
+            return err.errorDescription ?? err.localizedDescription
+        }
+        return nil
+    }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -25,16 +39,29 @@ public struct SchemaInputStepView: View {
 
                 Spacer()
 
-                if let file = fileData {
+                HStack(spacing: 8) {
+                    // Explicit 'Check' button requested by user
                     Button(action: {
-                        let generated = SchemaGenerator.generateDDL(from: file)
-                        ddlText = generated
-                        validateDDL(generated)
+                        performCheck()
                     }) {
-                        Label("Auto-Generate DDL", systemImage: "sparkles")
+                        Label("Check", systemImage: "checkmark.shield")
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.borderedProminent)
                     .controlSize(.regular)
+                    .help("Check and validate DDL statement")
+
+                    if let file = fileData {
+                        Button(action: {
+                            let generated = SchemaGenerator.generateDDL(from: file)
+                            ddlText = generated
+                            performCheck()
+                        }) {
+                            Label("Generate", systemImage: "sparkles")
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.regular)
+                        .help("Auto-generate DDL schema from file columns")
+                    }
                 }
             }
 
@@ -48,10 +75,19 @@ public struct SchemaInputStepView: View {
 
                     Spacer()
 
+                    Button(action: {
+                        performCheck()
+                    }) {
+                        Label("Check", systemImage: "checkmark.circle")
+                            .font(.caption2)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+
                     if !ddlText.isEmpty {
                         Button("Clear") {
                             ddlText = ""
-                            validateDDL("")
+                            performCheck()
                         }
                         .font(.caption2)
                         .buttonStyle(.plain)
@@ -67,11 +103,16 @@ public struct SchemaInputStepView: View {
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(NSColor.separatorColor).opacity(0.6), lineWidth: 1)
+                            .stroke(
+                                parseError != nil
+                                    ? Color.orange.opacity(0.8)
+                                    : (parsedSchema != nil ? Color.green.opacity(0.6) : Color(NSColor.separatorColor).opacity(0.6)),
+                                lineWidth: parseError != nil ? 1.5 : 1
+                            )
                     )
                     .frame(minHeight: 220)
-                    .onChange(of: ddlText) { newValue in
-                        validateDDL(newValue)
+                    .onChange(of: ddlText) {
+                        performCheck()
                     }
             }
 
@@ -114,6 +155,19 @@ public struct SchemaInputStepView: View {
                 .padding(12)
                 .background(RoundedRectangle(cornerRadius: 10).fill(Color.orange.opacity(0.12)))
                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.orange.opacity(0.3), lineWidth: 1))
+            } else if ddlText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                HStack(spacing: 10) {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                        .font(.title3)
+                    
+                    Text("Paste your PostgreSQL DDL or click Auto-Generate DDL, then click **Check** to validate.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(12)
+                .background(RoundedRectangle(cornerRadius: 10).fill(Color.secondary.opacity(0.06)))
             }
 
             // Footer Navigation Bar
@@ -121,48 +175,43 @@ public struct SchemaInputStepView: View {
                 Button(action: onPrevStep) {
                     HStack {
                         Image(systemName: "chevron.left")
-                        Text("Back to File Selection")
+                        Text("Back")
                     }
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.regular)
+                .help("Back to file selection")
 
                 Spacer()
 
                 Button(action: {
+                    performCheck()
                     if let schema = parsedSchema {
                         onSchemaParsed(schema, ddlText)
                         onNextStep()
                     }
                 }) {
                     HStack {
-                        Text("Next: Column Mapping")
+                        Text("Next")
                         Image(systemName: "chevron.right")
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.regular)
                 .disabled(parsedSchema == nil)
+                .help("Next: Column mapping")
             }
         }
         .onAppear {
             if ddlText.isEmpty, let file = fileData {
-                let generated = SchemaGenerator.generateDDL(from: file)
-                ddlText = generated
-                validateDDL(generated)
-            } else if !ddlText.isEmpty {
-                validateDDL(ddlText)
+                ddlText = SchemaGenerator.generateDDL(from: file)
             }
+            performCheck()
         }
     }
 
-    private func validateDDL(_ text: String) {
-        if let schema = DDLParser.parseDDL(text), !schema.columns.isEmpty {
-            parsedSchema = schema
-            parseError = nil
-        } else {
-            parsedSchema = nil
-            parseError = "Could not parse valid DDL. Ensure it contains a `CREATE TABLE` statement with column specifications."
-        }
+    private func performCheck() {
+        validationResult = DDLParser.validateAndParseDDL(ddlText)
+        isChecked = true
     }
 }

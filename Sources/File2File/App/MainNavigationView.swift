@@ -189,16 +189,28 @@ extension MainNavigationView {
                         Text("Video to GIF requires macOS 14.0 Sonoma or later.")
                             .foregroundColor(.secondary)
                     }
+                case "scan2pdf":
+                    Scan2PdfToolView()
+                case "pdfCompressor":
+                    PdfCompressorToolView()
                 case "imageToPdf":
                     PdfConverterToolView(initialMode: .imageToPdf)
+                        .id("imageToPdf")
                 case "pdfToImage":
                     PdfConverterToolView(initialMode: .pdfToImage)
+                        .id("pdfToImage")
+                case "pdfToWord":
+                    PdfConverterToolView(initialMode: .pdfToWord)
+                        .id("pdfToWord")
                 case "mergePdf":
                     PdfConverterToolView(initialMode: .mergePdf)
+                        .id("mergePdf")
                 case "splitPdf":
                     PdfConverterToolView(initialMode: .splitPdf)
+                        .id("splitPdf")
                 case "signPdf":
                     PdfConverterToolView(initialMode: .signPdf)
+                        .id("signPdf")
                 case "csv2json":
                     Csv2JsonToolView()
                 case "excel2csv":

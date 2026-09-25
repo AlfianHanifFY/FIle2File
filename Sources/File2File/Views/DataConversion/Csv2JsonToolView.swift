@@ -55,8 +55,9 @@ public struct Csv2JsonToolView: View {
 
             if fileData != nil {
                 Button(action: resetFile) {
-                    Label("Change File", systemImage: "arrow.triangle.2.circlepath")
+                    Label("Change", systemImage: "arrow.triangle.2.circlepath")
                 }
+                .help("Change source file")
             }
         }
         .padding(.horizontal, 20)
@@ -81,7 +82,7 @@ public struct Csv2JsonToolView: View {
                 title: "Drag & Drop your CSV / TSV file here",
                 subtitle: "Supports .csv, .tsv, and .txt delimited data files",
                 iconName: "doc.text",
-                buttonTitle: "Browse Files...",
+                buttonTitle: "Browse",
                 onBrowse: openFilePicker,
                 onDropFiles: { urls in
                     if let first = urls.first {
@@ -212,7 +213,7 @@ public struct Csv2JsonToolView: View {
                             .controlSize(.small)
                     } else {
                         Image(systemName: "square.and.arrow.down")
-                        Text("Export JSON File")
+                        Text("Export")
                             .fontWeight(.semibold)
                     }
                     Spacer()
@@ -221,6 +222,7 @@ public struct Csv2JsonToolView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(isProcessing || fileData == nil)
+            .help("Export JSON file to disk")
         }
     }
 
@@ -235,10 +237,11 @@ public struct Csv2JsonToolView: View {
                 Spacer()
 
                 Button(action: copyToClipboard) {
-                    Label(isCopied ? "Copied!" : "Copy JSON", systemImage: isCopied ? "checkmark" : "doc.on.doc")
+                    Label(isCopied ? "Copied!" : "Copy", systemImage: isCopied ? "checkmark" : "doc.on.doc")
                         .font(.caption)
                 }
                 .disabled(jsonPreview.isEmpty)
+                .help("Copy JSON preview to clipboard")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)

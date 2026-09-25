@@ -5,7 +5,12 @@ public struct SqlPreviewStepView: View {
     let tableName: String
     let mappings: [ColumnMapping]
     let fileData: FileData
+    var ddlText: String = ""
     let onPrevStep: () -> Void
+
+    private var activeMappedColumnsCount: Int {
+        mappings.filter { !$0.excelHeader.isEmpty }.count
+    }
 
     @ObservedObject private var settings = AppSettings.shared
     @State private var options = GeneratorOptions()
@@ -37,14 +42,15 @@ public struct SqlPreviewStepView: View {
 
                 HStack(spacing: 10) {
                     Button(action: copyToClipboard) {
-                        Label(isCopied ? "Copied!" : "Copy Preview", systemImage: isCopied ? "checkmark" : "doc.on.doc")
+                        Label(isCopied ? "Copied!" : "Copy", systemImage: isCopied ? "checkmark" : "doc.on.doc")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.regular)
                     .disabled(isExporting)
+                    .help("Copy SQL preview to clipboard")
 
                     Button(action: quickSaveToOutputDirectory) {
-                        Label("Quick Export to Output Dir", systemImage: "folder.badge.plus")
+                        Label("Quick", systemImage: "folder.badge.plus")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.regular)
@@ -52,11 +58,12 @@ public struct SqlPreviewStepView: View {
                     .help("Save directly to: \(settings.outputDirectoryPath)")
 
                     Button(action: saveToFile) {
-                        Label("Export .sql File...", systemImage: "square.and.arrow.down")
+                        Label("Save", systemImage: "square.and.arrow.down")
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.regular)
                     .disabled(isExporting)
+                    .help("Export complete .sql file")
                 }
             }
 
@@ -87,11 +94,12 @@ public struct SqlPreviewStepView: View {
                     Text(message)
                         .font(.callout)
                     Spacer()
-                    Button("Open Folder") {
+                    Button("Open") {
                         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: settings.outputDirectoryPath)
                     }
                     .buttonStyle(.link)
                     .font(.caption)
+                    .help("Open output folder in Finder")
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -103,9 +111,16 @@ public struct SqlPreviewStepView: View {
 
             // Options Bar Control Strip
             HStack(spacing: 20) {
+                Toggle("CREATE TABLE", isOn: $options.includeCreateTable)
+                    .toggleStyle(.checkbox)
+                    .onChange(of: options.includeCreateTable) { generate() }
+
+                Divider()
+                    .frame(height: 16)
+
                 Toggle("COPY FROM STDIN", isOn: $options.useCopyFormat)
                     .toggleStyle(.checkbox)
-                    .onChange(of: options.useCopyFormat) { _ in generate() }
+                    .onChange(of: options.useCopyFormat) { generate() }
 
                 if !options.useCopyFormat {
                     Divider()
@@ -113,7 +128,7 @@ public struct SqlPreviewStepView: View {
 
                     Toggle("ON CONFLICT DO NOTHING", isOn: $options.onConflictDoNothing)
                         .toggleStyle(.checkbox)
-                        .onChange(of: options.onConflictDoNothing) { _ in generate() }
+                        .onChange(of: options.onConflictDoNothing) { generate() }
 
                     Divider()
                         .frame(height: 16)
@@ -127,7 +142,7 @@ public struct SqlPreviewStepView: View {
                         TextField("500", value: $options.batchSize, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 65)
-                            .onChange(of: options.batchSize) { _ in generate() }
+                            .onChange(of: options.batchSize) { generate() }
                     }
                 }
 
@@ -137,7 +152,7 @@ public struct SqlPreviewStepView: View {
                     Image(systemName: "circle.fill")
                         .font(.system(size: 6))
                         .foregroundColor(.green)
-                    Text("\(fileData.totalRows) dataset rows • \(fileData.headers.count) cols")
+                    Text("\(fileData.totalRows) dataset rows • \(activeMappedColumnsCount) cols")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
@@ -188,12 +203,13 @@ public struct SqlPreviewStepView: View {
                 Button(action: onPrevStep) {
                     HStack {
                         Image(systemName: "chevron.left")
-                        Text("Back to Column Mapping")
+                        Text("Back")
                     }
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.regular)
                 .disabled(isExporting)
+                .help("Back to column mapping step")
 
                 Spacer()
 
@@ -220,7 +236,8 @@ public struct SqlPreviewStepView: View {
             tableName: tableName,
             mappings: mappings,
             rows: fileData.previewRows,
-            options: currentOptions
+            options: currentOptions,
+            ddlText: ddlText
         )
         sqlOutput = result.sql
         totalBatches = result.totalBatches
@@ -275,6 +292,7 @@ public struct SqlPreviewStepView: View {
                     fileData: fileData,
                     options: currentOptions,
                     outputURL: url,
+                    ddlText: ddlText,
                     progress: { processed, total in
                         DispatchQueue.main.async {
                             self.processedRowsCount = processed

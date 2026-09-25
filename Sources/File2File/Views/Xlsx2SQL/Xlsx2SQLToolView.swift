@@ -54,7 +54,7 @@ public struct Xlsx2SQLToolView: View {
                                 parsedSchema = schema
                                 ddlText = ddl
                                 if let file = fileData {
-                                    columnMappings = FuzzyMatch.autoMapColumns(sqlColumns: schema.columns, excelHeaders: file.headers)
+                                    syncMappings(schema: schema, headers: file.headers)
                                 }
                             },
                             onNextStep: {
@@ -85,6 +85,13 @@ public struct Xlsx2SQLToolView: View {
                                     }
                                 }
                             )
+                            .onAppear {
+                                // Re-parse DDL and sync mappings every time we enter Step 3
+                                if let schema = DDLParser.parseDDL(ddlText), !schema.columns.isEmpty {
+                                    parsedSchema = schema
+                                    syncMappings(schema: schema, headers: file.headers)
+                                }
+                            }
                         }
 
                     case 4:
@@ -93,6 +100,7 @@ public struct Xlsx2SQLToolView: View {
                                 tableName: schema.tableName,
                                 mappings: columnMappings,
                                 fileData: file,
+                                ddlText: ddlText,
                                 onPrevStep: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         currentStep = 3
@@ -108,6 +116,25 @@ public struct Xlsx2SQLToolView: View {
                 .padding(20)
             }
         }
+    }
+
+    private func syncMappings(schema: ParsedSchema, headers: [String]) {
+        let existingMap = Dictionary(uniqueKeysWithValues: columnMappings.map { ($0.sqlColumn, $0) })
+        var result: [ColumnMapping] = []
+        for col in schema.columns {
+            if let existing = existingMap[col.name] {
+                var updated = existing
+                updated.sqlType = col.dataType
+                updated.isNullable = col.isNullable
+                result.append(updated)
+            } else {
+                let auto = FuzzyMatch.autoMapColumns(sqlColumns: [col], excelHeaders: headers)
+                if let mapped = auto.first {
+                    result.append(mapped)
+                }
+            }
+        }
+        columnMappings = result
     }
 
     private func resetFlow() {

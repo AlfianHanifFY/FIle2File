@@ -69,13 +69,15 @@ public struct BackgroundRemoverToolView: View {
             if !removerItems.isEmpty {
                 HStack(spacing: 10) {
                     Button(action: addMoreFiles) {
-                        Label("Add Images", systemImage: "plus.circle")
+                        Label("Add", systemImage: "plus.circle")
                     }
+                    .help("Add images from disk")
                     
                     Button(action: clearAll) {
-                        Label("Clear All", systemImage: "trash")
+                        Label("Clear", systemImage: "trash")
                     }
                     .foregroundColor(.red)
+                    .help("Clear all images")
                 }
             }
         }
@@ -124,7 +126,7 @@ public struct BackgroundRemoverToolView: View {
             HStack(spacing: 0) {
                 if removerItems.count > 1 {
                     batchSidebarView
-                        .frame(width: 240)
+                        .frame(minWidth: 200, idealWidth: 240, maxWidth: 280)
                     Divider()
                 }
                 
@@ -152,7 +154,7 @@ public struct BackgroundRemoverToolView: View {
     // MARK: - Control Panel Card
     
     private var controlPanelCard: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: 20) {
             // Background Fill Mode
             VStack(alignment: .leading, spacing: 6) {
                 Text("BACKGROUND FILL")
@@ -164,6 +166,7 @@ public struct BackgroundRemoverToolView: View {
                         Text(type.rawValue).tag(type)
                     }
                 }
+                .labelsHidden()
                 .pickerStyle(.segmented)
                 .onChange(of: fillType) { _, _ in
                     triggerProcessingAll()
@@ -190,10 +193,11 @@ public struct BackgroundRemoverToolView: View {
                         .foregroundColor(.secondary)
                     
                     HStack(spacing: 8) {
-                        Button("Choose Image...") {
+                        Button("Browse") {
                             chooseCustomBgImage()
                         }
                         .buttonStyle(.bordered)
+                        .help("Choose custom background image")
                         
                         if let name = customBgName {
                             Text(name)
@@ -219,7 +223,8 @@ public struct BackgroundRemoverToolView: View {
                         Text(fmt.rawValue).tag(fmt)
                     }
                 }
-                .frame(width: 170)
+                .labelsHidden()
+                .frame(minWidth: 160)
                 .onChange(of: outputFormat) { _, _ in
                     triggerProcessingAll()
                 }
@@ -228,12 +233,14 @@ public struct BackgroundRemoverToolView: View {
             Spacer()
             
             Button(action: triggerProcessingAll) {
-                Label(isProcessingAll ? "Removing Background..." : "Apply & Remove", systemImage: "sparkles")
+                Label(isProcessingAll ? "Processing..." : "Apply", systemImage: "sparkles")
                     .font(.headline)
                     .padding(.horizontal, 12)
             }
             .buttonStyle(.borderedProminent)
             .disabled(isProcessingAll)
+            .help("Remove background from images")
+            .fixedSize(horizontal: true, vertical: false)
         }
         .padding(14)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.windowBackgroundColor)))
@@ -301,16 +308,14 @@ public struct BackgroundRemoverToolView: View {
     
     private func previewAreaView(for item: BackgroundRemoverItem) -> some View {
         VStack(spacing: 12) {
-            HStack {
-                Spacer()
-                Picker("View", selection: $activePreviewTab) {
-                    ForEach(PreviewTab.allCases) { tab in
-                        Text(tab.rawValue).tag(tab)
-                    }
+            Picker("Preview Mode", selection: $activePreviewTab) {
+                ForEach(PreviewTab.allCases) { tab in
+                    Text(tab.rawValue).tag(tab)
                 }
-                .pickerStyle(.menu)
-                .frame(width: 170)
             }
+            .labelsHidden()
+            .pickerStyle(.segmented)
+            .frame(width: 320)
             
             ZStack {
                 // Checkerboard pattern for transparency visualization
@@ -400,15 +405,17 @@ public struct BackgroundRemoverToolView: View {
             HStack(spacing: 12) {
                 if selectedItem?.processedData != nil {
                     Button(action: saveSingleSelected) {
-                        Label("Save Current Image...", systemImage: "square.and.arrow.down")
+                        Label("Save", systemImage: "square.and.arrow.down")
                     }
+                    .help("Save current selected image")
                 }
                 
                 if removerItems.contains(where: { $0.processedData != nil }) {
                     Button(action: saveAllImages) {
-                        Label("Save All Images...", systemImage: "folder.badge.plus")
+                        Label("Save", systemImage: "folder.badge.plus")
                     }
                     .buttonStyle(.borderedProminent)
+                    .help("Save all processed images")
                 }
             }
         }

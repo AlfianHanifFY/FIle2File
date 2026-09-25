@@ -12,10 +12,10 @@ public struct StepHeaderView: View {
     }
 
     private let steps = [
-        StepInfo(number: 1, title: "File Upload", icon: "doc.badge.plus"),
-        StepInfo(number: 2, title: "DDL Schema", icon: "text.badge.plus"),
-        StepInfo(number: 3, title: "Column Mapping", icon: "slider.horizontal.3"),
-        StepInfo(number: 4, title: "SQL Export", icon: "square.and.arrow.up")
+        StepInfo(number: 1, title: "File", icon: "doc.badge.plus"),
+        StepInfo(number: 2, title: "DDL", icon: "text.badge.plus"),
+        StepInfo(number: 3, title: "Map", icon: "slider.horizontal.3"),
+        StepInfo(number: 4, title: "SQL", icon: "square.and.arrow.up")
     ]
 
     public var body: some View {
@@ -38,11 +38,12 @@ public struct StepHeaderView: View {
             Spacer()
 
             Button(action: onReset) {
-                Label("Reset Flow", systemImage: "arrow.counterclockwise")
+                Label("Reset", systemImage: "arrow.counterclockwise")
                     .font(.callout)
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
+            .help("Reset flow")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)

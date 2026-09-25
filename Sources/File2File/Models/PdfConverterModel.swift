@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 public enum PdfConverterMode: String, CaseIterable, Identifiable {
     case imageToPdf = "Image to PDF"
     case pdfToImage = "PDF to Image"
+    case pdfToWord = "PDF to Word"
     case mergePdf = "Merge PDF"
     case splitPdf = "Split PDF"
     case signPdf = "Sign PDF"
@@ -385,6 +386,51 @@ public struct PdfSignItem: Identifiable, Hashable {
         lhs.id == rhs.id
     }
 }
+
+public struct PdfToWordOptions {
+    public var extractImages: Bool
+    public var maintainPageBreaks: Bool
+    public var outputFileName: String
+    
+    public init(
+        extractImages: Bool = true,
+        maintainPageBreaks: Bool = true,
+        outputFileName: String = "Converted_Document.docx"
+    ) {
+        self.extractImages = extractImages
+        self.maintainPageBreaks = maintainPageBreaks
+        self.outputFileName = outputFileName
+    }
+}
+
+public struct PdfToWordItem: Identifiable, Hashable {
+    public let id: UUID
+    public let url: URL
+    public let name: String
+    public let originalSize: Int64
+    public let pageCount: Int
+    
+    public init(id: UUID = UUID(), url: URL, name: String, originalSize: Int64, pageCount: Int) {
+        self.id = id
+        self.url = url
+        self.name = name
+        self.originalSize = originalSize
+        self.pageCount = pageCount
+    }
+    
+    public var formattedSize: String {
+        ByteCountFormatter.string(fromByteCount: originalSize, countStyle: .file)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public static func == (lhs: PdfToWordItem, rhs: PdfToWordItem) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 
 
 

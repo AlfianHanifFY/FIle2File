@@ -101,7 +101,7 @@ public struct PdfSignerView: View {
             HStack(spacing: 0) {
                 // Left Panel: Page Thumbnails & Digital Cert Options
                 leftControlPanel
-                    .frame(width: 280)
+                    .frame(minWidth: 240, idealWidth: 280, maxWidth: 340)
                 
                 Divider()
                 
@@ -142,11 +142,12 @@ public struct PdfSignerView: View {
             Button {
                 isShowingAddSignatureSheet = true
             } label: {
-                Label("Add Signature", systemImage: "pencil.and.outline")
+                Label("Signature", systemImage: "pencil.and.outline")
                     .fontWeight(.medium)
             }
             .buttonStyle(.borderedProminent)
             .disabled(pdfItem == nil)
+            .help("Add signature")
             
             Button {
                 pdfItem = nil
@@ -155,9 +156,10 @@ public struct PdfSignerView: View {
                 pageThumbnails.removeAll()
                 signedExportResult = nil
             } label: {
-                Label("Change PDF", systemImage: "arrow.triangle.2.circlepath")
+                Label("Change", systemImage: "arrow.triangle.2.circlepath")
             }
             .buttonStyle(.bordered)
+            .help("Change source PDF")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
@@ -390,11 +392,12 @@ public struct PdfSignerView: View {
             Button {
                 exportSignedPdf()
             } label: {
-                Label(signedExportResult != nil ? "Save Signed PDF" : "Sign & Export PDF", systemImage: "square.and.arrow.down")
+                Label(signedExportResult != nil ? "Save" : "Sign", systemImage: "square.and.arrow.down")
                     .font(.headline)
             }
             .buttonStyle(.borderedProminent)
             .disabled(pdfItem == nil || isProcessingExport)
+            .help("Sign & export PDF")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -556,6 +559,7 @@ struct SignatureCreationSheet: View {
                 Text("Upload Image").tag(1)
                 Text("Type Text").tag(2)
             }
+            .labelsHidden()
             .pickerStyle(.segmented)
             .padding()
             
@@ -579,14 +583,16 @@ struct SignatureCreationSheet: View {
                     currentPath = Path()
                     importedImage = nil
                 }
+                .help("Clear signature input")
                 Spacer()
-                Button("Add to PDF") {
+                Button("Add") {
                     if let image = generateSignatureImage() {
                         onSave(image)
                         dismiss()
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                .help("Add signature to PDF")
             }
             .padding()
             .background(Color(NSColor.controlBackgroundColor))
@@ -664,13 +670,14 @@ struct SignatureCreationSheet: View {
                 .padding(.horizontal)
             }
             
-            Button("Choose Image File...") {
+            Button("Browse") {
                 let panel = NSOpenPanel()
                 panel.allowedContentTypes = [.png, .jpeg]
                 if panel.runModal() == .OK, let url = panel.url {
                     importedImage = NSImage(contentsOf: url)
                 }
             }
+            .help("Choose image file from disk")
         }
     }
     
@@ -689,7 +696,8 @@ struct SignatureCreationSheet: View {
                         Text(font).tag(font)
                     }
                 }
-                .frame(width: 220)
+                .labelsHidden()
+                .frame(minWidth: 160, idealWidth: 200)
                 
                 ColorPicker("Color", selection: $textColor)
             }

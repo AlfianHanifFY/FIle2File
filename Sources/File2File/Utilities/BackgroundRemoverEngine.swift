@@ -24,6 +24,13 @@ public struct BackgroundRemoverEngine {
         )
     }
     
+    private static let sharedCIContext: CIContext = {
+        if let mtlDevice = MTLCreateSystemDefaultDevice() {
+            return CIContext(mtlDevice: mtlDevice)
+        }
+        return CIContext()
+    }()
+
     public static func removeBackground(
         item: BackgroundRemoverItem,
         config: BackgroundRemoverConfig
@@ -58,8 +65,7 @@ public struct BackgroundRemoverEngine {
                 config: config
             )
             
-            let context = CIContext()
-            guard let outputCGImage = context.createCGImage(blendedCIImage, from: blendedCIImage.extent) else {
+            guard let outputCGImage = sharedCIContext.createCGImage(blendedCIImage, from: blendedCIImage.extent) else {
                 updatedItem.isProcessing = false
                 updatedItem.errorMessage = "Failed to render processed image."
                 return updatedItem

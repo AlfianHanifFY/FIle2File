@@ -59,6 +59,46 @@ final class File2FileTests: XCTestCase {
         XCTAssertTrue(result.sql.contains("('Alice', 30)"))
     }
 
+    func testCustomTypedValuesForMissingDDLColumns() throws {
+        // DDL has 4 columns: name, age, status, created_by
+        // File only has 2 columns: "Full Name", "Age"
+        let mappings = [
+            ColumnMapping(sqlColumn: "name", sqlType: "VARCHAR", isNullable: false, excelHeader: "Full Name"),
+            ColumnMapping(sqlColumn: "age", sqlType: "INTEGER", isNullable: true, excelHeader: "Age"),
+            ColumnMapping(sqlColumn: "status", sqlType: "VARCHAR", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "ACTIVE"),
+            ColumnMapping(sqlColumn: "created_by", sqlType: "VARCHAR", isNullable: true, excelHeader: ColumnMapping.customValueIdentifier, customValue: "system_import"),
+            ColumnMapping(sqlColumn: "omitted_col", sqlType: "TEXT", isNullable: true, excelHeader: "") // Left unmapped
+        ]
+        let rows = [
+            ["Full Name": "Alice", "Age": "30"],
+            ["Full Name": "Bob", "Age": "25"]
+        ]
+        let options = GeneratorOptions(batchSize: 500, includeCreateTable: false, useCopyFormat: false)
+
+        let result = SQLGenerator.generateSQL(tableName: "users", mappings: mappings, rows: rows, options: options)
+        XCTAssertEqual(result.totalRowsProcessed, 2)
+        XCTAssertTrue(result.sql.contains("INSERT INTO \"users\" (\"name\", \"age\", \"status\", \"created_by\") VALUES"))
+        XCTAssertFalse(result.sql.contains("omitted_col"))
+        XCTAssertTrue(result.sql.contains("('Alice', 30, 'ACTIVE', 'system_import')"))
+        XCTAssertTrue(result.sql.contains("('Bob', 25, 'ACTIVE', 'system_import')"))
+    }
+
+    func testNullHandlingStrategies() throws {
+        let mappings = [
+            ColumnMapping(sqlColumn: "name", sqlType: "VARCHAR", isNullable: false, excelHeader: "Name", nullHandling: .defaultValue, defaultValue: "UNKNOWN"),
+            ColumnMapping(sqlColumn: "note", sqlType: "VARCHAR", isNullable: true, excelHeader: "Note", nullHandling: .emptyString),
+            ColumnMapping(sqlColumn: "age", sqlType: "INTEGER", isNullable: true, excelHeader: "Age", nullHandling: .setNull),
+            ColumnMapping(sqlColumn: "score", sqlType: "INTEGER", isNullable: true, excelHeader: "Score", nullHandling: .defaultValue, defaultValue: "0")
+        ]
+        let rows = [
+            ["Name": "", "Note": "null", "Age": "n/a", "Score": ""]
+        ]
+        let options = GeneratorOptions(batchSize: 500, includeCreateTable: false, useCopyFormat: false)
+
+        let result = SQLGenerator.generateSQL(tableName: "records", mappings: mappings, rows: rows, options: options)
+        XCTAssertTrue(result.sql.contains("('UNKNOWN', '', NULL, 0)"))
+    }
+
     func testCSVStreamingAndExport() throws {
         let tempDir = FileManager.default.temporaryDirectory
         let csvURL = tempDir.appendingPathComponent("test_\(UUID().uuidString).csv")
@@ -334,6 +374,136 @@ final class File2FileTests: XCTestCase {
         XCTAssertEqual(videoTool?.name, "Video to GIF")
         XCTAssertEqual(videoTool?.category, .media)
     }
+
+    func testScan2PdfEngine() async throws {
+        let scanTool = AppTool.allTools.first(where: { $0.id == "scan2pdf" })
+        XCTAssertNotNil(scanTool)
+        XCTAssertEqual(scanTool?.name, "Scan to PDF")
+        XCTAssertEqual(scanTool?.category, .media)
+
+        // Create sample paper photo image
+        let origImage = NSImage(size: NSSize(width: 200, height: 300), flipped: false) { rect in
+            NSColor.lightGray.set()
+            rect.fill()
+            return true
+        }
+
+        let tempDir = FileManager.default.temporaryDirectory
+        let sampleImgURL = tempDir.appendingPathComponent("test_scan_\(UUID().uuidString).png")
+        defer { try? FileManager.default.removeItem(at: sampleImgURL) }
+
+        guard let cgImg = origImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            XCTFail("Failed to create CGImage")
+            return
+        }
+        let bitmapRep = NSBitmapImageRep(cgImage: cgImg)
+        if let pngData = bitmapRep.representation(using: .png, properties: [:]) {
+            try pngData.write(to: sampleImgURL)
+        }
+
+        guard let scanItem = Scan2PdfEngine.loadScanItem(from: sampleImgURL, defaultPreset: .highContrastBW) else {
+            XCTFail("Failed to load scan item")
+            return
+        }
+
+        XCTAssertEqual(scanItem.preset, .highContrastBW)
+        XCTAssertNotNil(scanItem.processedThumbnail)
+
+        // Test Process Image Presets
+        for preset in ScanPreset.allCases {
+            let processed = Scan2PdfEngine.processImage(origImage, preset: preset, rotationDegrees: 90, fineTuning: ScanFineTuning(brightness: 0.1, contrast: 1.2, sharpness: 0.5))
+            XCTAssertNotNil(processed, "Processed image for preset \(preset.rawValue) should not be nil")
+        }
+
+        // Test PDF Generation
+        let options = Scan2PdfOptions(pageSize: .a4, orientation: .portrait, marginPoints: 10, compressionQuality: .high, pdfFileName: "Scan_UnitTest.pdf")
+        let exportResult = await Scan2PdfEngine.generatePdfDocument(items: [scanItem], options: options)
+
+        XCTAssertNotNil(exportResult)
+        XCTAssertEqual(exportResult?.name, "Scan_UnitTest.pdf")
+        XCTAssertEqual(exportResult?.pageCount, 1)
+
+        if let pdfData = exportResult?.data, let doc = PDFDocument(data: pdfData) {
+            XCTAssertEqual(doc.pageCount, 1)
+        } else {
+            XCTFail("Failed to load generated PDF document")
+        }
+    }
+
+    func testPdfCompressorEngine() async throws {
+        // Create sample PDF with 1 page
+        let pdfDoc = PDFDocument()
+        let pageImg = NSImage(size: NSSize(width: 400, height: 400))
+        pageImg.lockFocus()
+        NSColor.blue.set()
+        NSRect(x: 0, y: 0, width: 400, height: 400).fill()
+        pageImg.unlockFocus()
+        
+        guard let pdfPage = PDFPage(image: pageImg) else {
+            XCTFail("Failed to create PDF page from image")
+            return
+        }
+        pdfDoc.insert(pdfPage, at: 0)
+        
+        let tempDir = FileManager.default.temporaryDirectory
+        let samplePdfURL = tempDir.appendingPathComponent("test_compress_\(UUID().uuidString).pdf")
+        defer { try? FileManager.default.removeItem(at: samplePdfURL) }
+        
+        pdfDoc.write(to: samplePdfURL)
+        
+        guard let compressorItem = PdfCompressorEngine.loadPdfItem(from: samplePdfURL) else {
+            XCTFail("Failed to load PDF compressor item")
+            return
+        }
+        
+        XCTAssertEqual(compressorItem.pageCount, 1)
+        XCTAssertGreaterThan(compressorItem.originalSize, 0)
+        
+        let options = PdfCompressorOptions(preset: .medium, qualityPercent: 50.0, targetDpi: .dpi150)
+        let result = try await PdfCompressorEngine.compressPdf(item: compressorItem, options: options, progressHandler: { _ in })
+        
+        XCTAssertTrue(FileManager.default.fileExists(atPath: result.outputUrl.path))
+        XCTAssertGreaterThan(result.compressedSize, 0)
+        
+        if let compressedDoc = PDFDocument(url: result.outputUrl) {
+            XCTAssertEqual(compressedDoc.pageCount, 1)
+        } else {
+            XCTFail("Compressed PDF could not be opened")
+        }
+        
+        try? FileManager.default.removeItem(at: result.outputUrl)
+    }
+
+    func testPdfToWordEngine() throws {
+        let pdfDoc = PDFDocument()
+        let pageImg = NSImage(size: NSSize(width: 400, height: 600))
+        pageImg.lockFocus()
+        NSColor.blue.set()
+        NSRect(x: 0, y: 0, width: 400, height: 600).fill()
+        pageImg.unlockFocus()
+        
+        guard let pdfPage = PDFPage(image: pageImg) else {
+            XCTFail("Failed to create PDF page")
+            return
+        }
+        pdfDoc.insert(pdfPage, at: 0)
+        
+        let tempDir = FileManager.default.temporaryDirectory
+        let samplePdfURL = tempDir.appendingPathComponent("test_word_\(UUID().uuidString).pdf")
+        defer { try? FileManager.default.removeItem(at: samplePdfURL) }
+        
+        pdfDoc.write(to: samplePdfURL)
+        
+        let options = PdfToWordOptions(extractImages: true, maintainPageBreaks: true)
+        let docxURL = try PdfToWordEngine.convertToDocx(pdfURL: samplePdfURL, options: options)
+        defer { try? FileManager.default.removeItem(at: docxURL) }
+        
+        XCTAssertTrue(FileManager.default.fileExists(atPath: docxURL.path))
+        let docxData = try Data(contentsOf: docxURL)
+        XCTAssertGreaterThan(docxData.count, 0)
+    }
 }
+
+
 
 

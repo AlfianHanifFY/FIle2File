@@ -11,7 +11,8 @@ public struct SQLGenerator {
         tableName: String,
         mappings: [ColumnMapping],
         rows: [[String: String]],
-        options: GeneratorOptions
+        options: GeneratorOptions,
+        ddlText: String? = nil
     ) -> GenerationResult {
         let activeMappings = mappings.filter { !$0.excelHeader.isEmpty }
 
@@ -35,11 +36,18 @@ public struct SQLGenerator {
         sqlLines.append("-- Generated At: \(formatter.string(from: Date()))")
         sqlLines.append("")
 
+        if options.includeCreateTable {
+            sqlLines.append("-- Table Definition")
+            let ddlStatement = resolveCreateTableDDL(tableName: tableName, mappings: activeMappings, ddlText: ddlText)
+            sqlLines.append(ddlStatement)
+            sqlLines.append("")
+        }
+
         if options.useCopyFormat {
             sqlLines.append("COPY \"\(tableName)\" (\(columnsList)) FROM STDIN WITH (FORMAT text, NULL '\\N');")
             for row in rows {
                 let copyRow = activeMappings
-                    .map { m in formatCopyValue(row[m.excelHeader], mapping: m) }
+                    .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
                     .joined(separator: "\t")
                 sqlLines.append(copyRow)
             }
@@ -60,7 +68,7 @@ public struct SQLGenerator {
 
             let valuesBlock = chunk.map { row in
                 let vals = activeMappings
-                    .map { m in formatSqlValue(row[m.excelHeader], mapping: m) }
+                    .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
                     .joined(separator: ", ")
                 return "  (\(vals))"
             }.joined(separator: ",\n")
@@ -85,6 +93,7 @@ public struct SQLGenerator {
         fileData: FileData,
         options: GeneratorOptions,
         outputURL: URL,
+        ddlText: String? = nil,
         progress: ((_ processedRows: Int, _ totalRows: Int) -> Void)? = nil
     ) throws -> GenerationResult {
         let activeMappings = mappings.filter { !$0.excelHeader.isEmpty }
@@ -98,9 +107,23 @@ public struct SQLGenerator {
         }
         defer { try? fileHandle.close() }
 
+        var writeBuffer = Data()
+        writeBuffer.reserveCapacity(65536)
+
         func writeString(_ string: String) {
             if let data = string.data(using: .utf8) {
-                fileHandle.write(data)
+                writeBuffer.append(data)
+                if writeBuffer.count >= 65536 {
+                    fileHandle.write(writeBuffer)
+                    writeBuffer.removeAll(keepingCapacity: true)
+                }
+            }
+        }
+
+        func flushBuffer() {
+            if !writeBuffer.isEmpty {
+                fileHandle.write(writeBuffer)
+                writeBuffer.removeAll()
             }
         }
 
@@ -121,6 +144,13 @@ public struct SQLGenerator {
         }
         writeString(headerLines.joined(separator: "\n") + "\n")
 
+        if options.includeCreateTable {
+            var ddlBlock = "-- Table Definition\n"
+            ddlBlock += resolveCreateTableDDL(tableName: tableName, mappings: activeMappings, ddlText: ddlText)
+            ddlBlock += "\n\n"
+            writeString(ddlBlock)
+        }
+
         var totalRowsProcessed = 0
         var totalBatches = 0
 
@@ -132,7 +162,7 @@ public struct SQLGenerator {
                 chunkLines.reserveCapacity(chunk.count)
                 for row in chunk {
                     let copyRow = activeMappings
-                        .map { m in formatCopyValue(row[m.excelHeader], mapping: m) }
+                        .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
                         .joined(separator: "\t")
                     chunkLines.append(copyRow)
                 }
@@ -152,7 +182,7 @@ public struct SQLGenerator {
 
                 let valuesBlock = chunk.map { row in
                     let vals = activeMappings
-                        .map { m in formatSqlValue(row[m.excelHeader], mapping: m) }
+                        .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
                         .joined(separator: ", ")
                     return "  (\(vals))"
                 }.joined(separator: ",\n")
@@ -170,21 +200,35 @@ public struct SQLGenerator {
             }
         }
 
+        flushBuffer()
         return GenerationResult(sql: "", totalBatches: totalBatches, totalRowsProcessed: totalRowsProcessed)
     }
 
     private static func formatSqlValue(_ rawVal: String?, mapping: ColumnMapping) -> String {
-        guard let rawVal = rawVal else { return "NULL" }
+        guard let rawVal = rawVal else {
+            return mapping.isCustomValue ? "NULL" : resolveNullOrEmpty(mapping: mapping)
+        }
         let strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let nullStrings = ["", "null", "n/a", "none", "nan"]
         if nullStrings.contains(strVal.lowercased()) {
-            if mapping.nullHandling == .defaultValue && !mapping.defaultValue.isEmpty {
-                var defaultMapping = mapping
-                defaultMapping.nullHandling = .setNull
-                return formatSqlValue(mapping.defaultValue, mapping: defaultMapping)
+            return mapping.isCustomValue ? "NULL" : resolveNullOrEmpty(mapping: mapping)
+        }
+
+        let upper = strVal.uppercased()
+        if upper == "DEFAULT" || upper == "NULL" {
+            return upper
+        }
+
+        // Handle user-specified custom literal
+        if mapping.isCustomValue {
+            if strVal.hasPrefix("'") && strVal.hasSuffix("'") && strVal.count >= 2 {
+                let unquoted = String(strVal.dropFirst().dropLast())
+                return "'\(escapeString(unquoted))'"
             }
-            return "NULL"
+            if ["now()", "current_timestamp", "current_date"].contains(strVal.lowercased()) {
+                return strVal.uppercased()
+            }
         }
 
         let type = mapping.sqlType.uppercased()
@@ -194,7 +238,7 @@ public struct SQLGenerator {
             if let parsedInt = Int64(cleanNum) {
                 return String(parsedInt)
             }
-            return "NULL"
+            return mapping.isCustomValue ? (strVal.hasPrefix("'") ? strVal : "'\(escapeString(strVal))'") : resolveNullOrEmpty(mapping: mapping)
         }
 
         if type == "NUMERIC" || type == "DOUBLE PRECISION" || type == "REAL" {
@@ -202,21 +246,25 @@ public struct SQLGenerator {
             if let parsedDouble = Double(cleanNum) {
                 return String(parsedDouble)
             }
-            return "NULL"
+            return resolveNullOrEmpty(mapping: mapping)
         }
 
         if type == "BOOLEAN" {
             let lower = strVal.lowercased()
             if ["true", "t", "1", "yes", "y"].contains(lower) { return "TRUE" }
             if ["false", "f", "0", "no", "n"].contains(lower) { return "FALSE" }
-            return "NULL"
+            return resolveNullOrEmpty(mapping: mapping)
         }
 
         if type.contains("DATE") || type.contains("TIMESTAMP") {
+            let lower = strVal.lowercased()
+            if ["now()", "current_timestamp", "current_date"].contains(lower) {
+                return strVal.uppercased()
+            }
             if let dateStr = parseAndFormatDate(strVal, targetType: type) {
                 return "'\(dateStr)'"
             }
-            return "NULL"
+            return resolveNullOrEmpty(mapping: mapping)
         }
 
         if type.contains("JSON") {
@@ -227,16 +275,82 @@ public struct SQLGenerator {
         return "'\(escapeString(strVal))'"
     }
 
+    private static func resolveNullOrEmpty(mapping: ColumnMapping) -> String {
+        if mapping.nullHandling == .defaultValue && !mapping.defaultValue.isEmpty {
+            var defaultMapping = mapping
+            defaultMapping.nullHandling = .setNull
+            return formatSqlValue(mapping.defaultValue, mapping: defaultMapping)
+        }
+        if mapping.nullHandling == .emptyString {
+            let type = mapping.sqlType.uppercased()
+            if type.contains("CHAR") || type.contains("TEXT") || type.contains("VARCHAR") {
+                return "''"
+            }
+        }
+        return "NULL"
+    }
+
     private static func formatCopyValue(_ rawVal: String?, mapping: ColumnMapping) -> String {
-        guard let rawVal = rawVal else { return "\\N" }
+        guard let rawVal = rawVal else {
+            return resolveCopyNullOrEmpty(mapping: mapping)
+        }
         let strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
-        if strVal.isEmpty || strVal.lowercased() == "null" { return "\\N" }
+        if strVal.isEmpty || strVal.lowercased() == "null" {
+            return resolveCopyNullOrEmpty(mapping: mapping)
+        }
 
         return strVal
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "\t", with: "\\t")
             .replacingOccurrences(of: "\n", with: "\\n")
             .replacingOccurrences(of: "\r", with: "\\r")
+    }
+
+    private static func resolveCopyNullOrEmpty(mapping: ColumnMapping) -> String {
+        if mapping.nullHandling == .defaultValue && !mapping.defaultValue.isEmpty {
+            return mapping.defaultValue
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\t", with: "\\t")
+                .replacingOccurrences(of: "\n", with: "\\n")
+                .replacingOccurrences(of: "\r", with: "\\r")
+        }
+        if mapping.nullHandling == .emptyString {
+            return ""
+        }
+        return "\\N"
+    }
+
+    private static func resolveCreateTableDDL(
+        tableName: String,
+        mappings: [ColumnMapping],
+        ddlText: String?
+    ) -> String {
+        if let ddl = ddlText?.trimmingCharacters(in: .whitespacesAndNewlines), !ddl.isEmpty {
+            var formatted = ddl
+            formatted = formatted.replacingOccurrences(of: "[“”]", with: "\"", options: .regularExpression)
+            formatted = formatted.replacingOccurrences(of: "[‘’]", with: "'", options: .regularExpression)
+
+            if !formatted.localizedCaseInsensitiveContains("IF NOT EXISTS") {
+                formatted = formatted.replacingOccurrences(
+                    of: "(?i)CREATE\\s+TABLE\\s+",
+                    with: "CREATE TABLE IF NOT EXISTS ",
+                    options: .regularExpression
+                )
+            }
+            if !formatted.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix(";") {
+                formatted += ";"
+            }
+            return formatted
+        } else {
+            let colDefs = mappings.map { m in
+                var def = "    \"\(m.sqlColumn)\" \(m.sqlType)"
+                if !m.isNullable {
+                    def += " NOT NULL"
+                }
+                return def
+            }.joined(separator: ",\n")
+            return "CREATE TABLE IF NOT EXISTS \"\(tableName)\" (\n\(colDefs)\n);"
+        }
     }
 
     private static func escapeString(_ val: String) -> String {

@@ -27,10 +27,9 @@ public struct ImageCompressionConfig {
 
 public class ImageCompressor {
     
-    /// Extract metadata and create an initial ImageItem from a File URL
+    /// Extract metadata and create an initial ImageItem from a File URL efficiently
     public static func loadItem(from url: URL) -> ImageItem? {
-        guard let data = try? Data(contentsOf: url),
-              let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+        guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             return nil
         }
         
@@ -39,7 +38,8 @@ public class ImageCompressor {
         let height = properties?[kCGImagePropertyPixelHeight] as? Int ?? 0
         let format = url.pathExtension.uppercased()
         
-        let originalSize = Int64(data.count)
+        let originalSize = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? 0
+        let data = (try? Data(contentsOf: url)) ?? Data()
         
         return ImageItem(
             url: url,
@@ -50,6 +50,40 @@ public class ImageCompressor {
             originalHeight: height,
             originalFormat: format.isEmpty ? "IMAGE" : format
         )
+    }
+    
+    /// Bounded concurrent batch compression for high efficiency without exhausting RAM
+    public static func compressBatch(_ items: [ImageItem], config: ImageCompressionConfig) async -> [ImageItem] {
+        let maxConcurrency = max(1, ProcessInfo.processInfo.activeProcessorCount - 1)
+        return await withTaskGroup(of: (Int, ImageItem).self) { group in
+            var results = [ImageItem?](repeating: nil, count: items.count)
+            var index = 0
+            
+            while index < items.count && index < maxConcurrency {
+                let item = items[index]
+                let currentIndex = index
+                group.addTask {
+                    let compressed = await compress(item, config: config)
+                    return (currentIndex, compressed)
+                }
+                index += 1
+            }
+            
+            for await (i, compressed) in group {
+                results[i] = compressed
+                if index < items.count {
+                    let item = items[index]
+                    let currentIndex = index
+                    group.addTask {
+                        let compressed = await compress(item, config: config)
+                        return (currentIndex, compressed)
+                    }
+                    index += 1
+                }
+            }
+            
+            return results.compactMap { $0 }
+        }
     }
     
     /// Extract metadata from Data directly
@@ -88,7 +122,23 @@ public class ImageCompressor {
             }
             
             // Determine effective target format
-            let targetFormat = resolveFormat(config.outputFormat, originalFormat: item.originalFormat)
+            let resolvedFormat = resolveFormat(config.outputFormat, originalFormat: item.originalFormat)
+            
+            // PNG is lossless — quality settings have zero effect on PNG encoding.
+            // When the user wants lossy compression (quality < 100% or target size mode),
+            // automatically use JPEG instead so compression actually works.
+            let targetFormat: ImageOutputFormat
+            switch config.mode {
+            case .byPercentage:
+                if resolvedFormat == .png && config.qualityPercent < 100.0 {
+                    targetFormat = .jpeg
+                } else {
+                    targetFormat = resolvedFormat
+                }
+            case .byTargetSize:
+                // compressToTargetSize already handles PNG fallback internally
+                targetFormat = resolvedFormat
+            }
             
             switch config.mode {
             case .byPercentage:
@@ -96,11 +146,21 @@ public class ImageCompressor {
                 let res = encode(cgImage: cgImage, quality: quality, format: targetFormat, maxDimension: config.maxDimension)
                 
                 if let (compressedData, finalWidth, finalHeight) = res {
-                    updatedItem.compressedData = compressedData
-                    updatedItem.compressedSize = Int64(compressedData.count)
-                    updatedItem.compressedWidth = finalWidth
-                    updatedItem.compressedHeight = finalHeight
-                    updatedItem.appliedQuality = quality
+                    // If compressed is somehow larger than original (e.g. format conversion overhead),
+                    // return the original data as-is to avoid inflating the file.
+                    if Int64(compressedData.count) >= item.originalSize && config.maxDimension == nil {
+                        updatedItem.compressedData = item.originalData
+                        updatedItem.compressedSize = item.originalSize
+                        updatedItem.compressedWidth = item.originalWidth
+                        updatedItem.compressedHeight = item.originalHeight
+                        updatedItem.appliedQuality = 1.0
+                    } else {
+                        updatedItem.compressedData = compressedData
+                        updatedItem.compressedSize = Int64(compressedData.count)
+                        updatedItem.compressedWidth = finalWidth
+                        updatedItem.compressedHeight = finalHeight
+                        updatedItem.appliedQuality = quality
+                    }
                 } else {
                     updatedItem.errorMessage = "Compression encoding failed."
                 }
@@ -187,14 +247,50 @@ public class ImageCompressor {
         maxDimension: Int?
     ) -> (Data, Int, Int, Double)? {
         
+        // 1. Try requested format first (with minScaleFactor 0.75 if auto/png, so resolution isn't excessively degraded if JPEG lossy compression can achieve full resolution)
+        let minScale = (format == .auto || format == .png) ? 0.75 : 0.1
+        if let result = compressToTargetSizeSingleFormat(cgImage: cgImage, targetBytes: targetBytes, format: format, maxDimension: maxDimension, minScaleFactor: minScale) {
+            return result
+        }
+        
+        // 2. If requested format was PNG or Match Original (.auto) and couldn't fit targetBytes at high resolution, fallback to JPEG lossy compression
+        if format == .png || format == .auto {
+            if let jpegResult = compressToTargetSizeSingleFormat(cgImage: cgImage, targetBytes: targetBytes, format: .jpeg, maxDimension: maxDimension, minScaleFactor: 0.1) {
+                return jpegResult
+            }
+        }
+        
+        // 3. If JPEG lossy still needs further scaling, allow PNG down to 0.1 scale
+        if format == .png {
+            if let pngResult = compressToTargetSizeSingleFormat(cgImage: cgImage, targetBytes: targetBytes, format: .png, maxDimension: maxDimension, minScaleFactor: 0.1) {
+                return pngResult
+            }
+        }
+        
+        // 4. Final fallback: return lowest quality encoding at small dimension
+        let originalMaxDim = max(cgImage.width, cgImage.height)
+        let fallbackFormat = (format == .png || format == .auto) ? ImageOutputFormat.jpeg : format
+        if let fallback = encode(cgImage: cgImage, quality: 0.05, format: fallbackFormat, maxDimension: Int(Double(originalMaxDim) * 0.1)) {
+            return (fallback.0, fallback.1, fallback.2, 0.05)
+        }
+        
+        return nil
+    }
+    
+    private static func compressToTargetSizeSingleFormat(
+        cgImage: CGImage,
+        targetBytes: Int64,
+        format: ImageOutputFormat,
+        maxDimension: Int?,
+        minScaleFactor: Double = 0.1
+    ) -> (Data, Int, Int, Double)? {
         let currentDimension = maxDimension
         let currentImage = cgImage
         let originalMaxDim = max(cgImage.width, cgImage.height)
         
-        // Downscale scale factor loop if needed
         var scaleFactor: Double = 1.0
         
-        while scaleFactor >= 0.1 {
+        while scaleFactor >= minScaleFactor - 0.01 {
             let targetMaxDim: Int
             if let userMax = currentDimension {
                 targetMaxDim = min(userMax, Int(Double(originalMaxDim) * scaleFactor))
@@ -202,16 +298,15 @@ public class ImageCompressor {
                 targetMaxDim = Int(Double(originalMaxDim) * scaleFactor)
             }
             
-            // Binary search quality range 0.05 ... 1.0
             var low: Double = 0.02
             var high: Double = 1.0
             var bestResult: (Data, Int, Int)? = nil
             var bestQuality: Double = 1.0
             
-            for _ in 0..<8 { // 8 iterations of binary search is very accurate & fast
+            for _ in 0..<8 { // 8 iterations of binary search
                 let mid = (low + high) / 2.0
                 if let encoded = encode(cgImage: currentImage, quality: mid, format: format, maxDimension: targetMaxDim) {
-                    if encoded.0.count <= targetBytes {
+                    if Int64(encoded.0.count) <= targetBytes {
                         bestResult = encoded
                         bestQuality = mid
                         low = mid // try higher quality if still under target
@@ -223,17 +318,11 @@ public class ImageCompressor {
                 }
             }
             
-            if let result = bestResult {
+            if let result = bestResult, Int64(result.0.count) <= targetBytes {
                 return (result.0, result.1, result.2, bestQuality)
             }
             
-            // If even lowest quality at current scale couldn't meet target size, scale dimensions down
             scaleFactor -= 0.15
-        }
-        
-        // Fallback to lowest possible quality at 10% scale if impossible
-        if let fallback = encode(cgImage: currentImage, quality: 0.05, format: format, maxDimension: Int(Double(originalMaxDim) * 0.1)) {
-            return (fallback.0, fallback.1, fallback.2, 0.05)
         }
         
         return nil

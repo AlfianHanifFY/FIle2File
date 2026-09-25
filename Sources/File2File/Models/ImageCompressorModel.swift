@@ -95,8 +95,13 @@ public struct ImageItem: Identifiable, Equatable {
     
     public static func == (lhs: ImageItem, rhs: ImageItem) -> Bool {
         lhs.id == rhs.id &&
+        lhs.compressedData == rhs.compressedData &&
         lhs.compressedSize == rhs.compressedSize &&
-        lhs.isCompressing == rhs.isCompressing
+        lhs.compressedWidth == rhs.compressedWidth &&
+        lhs.compressedHeight == rhs.compressedHeight &&
+        lhs.appliedQuality == rhs.appliedQuality &&
+        lhs.isCompressing == rhs.isCompressing &&
+        lhs.errorMessage == rhs.errorMessage
     }
     
     public var formattedOriginalSize: String {

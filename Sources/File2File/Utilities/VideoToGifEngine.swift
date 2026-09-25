@@ -116,18 +116,30 @@ public actor VideoToGifEngine {
         
         var generatedCount = 0
         
-        for cmTime in timeValues {
-            do {
-                let cgImage = try await generator.image(at: cmTime).image
-                CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
-            } catch {
-                // If single frame fails, log or continue
-                print("Failed frame at time \(cmTime.seconds): \(error.localizedDescription)")
+        if #available(macOS 13.0, *) {
+            for try await result in generator.images(for: timeValues) {
+                switch result {
+                case .success(_, let cgImage, _):
+                    CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+                case .failure(_, let error):
+                    print("Failed frame: \(error.localizedDescription)")
+                }
+                generatedCount += 1
+                let currentProgress = Double(generatedCount) / Double(frameCount)
+                progressHandler(currentProgress)
             }
-            
-            generatedCount += 1
-            let currentProgress = Double(generatedCount) / Double(frameCount)
-            progressHandler(currentProgress)
+        } else {
+            for cmTime in timeValues {
+                do {
+                    let cgImage = try await generator.image(at: cmTime).image
+                    CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+                } catch {
+                    print("Failed frame at time \(cmTime.seconds): \(error.localizedDescription)")
+                }
+                generatedCount += 1
+                let currentProgress = Double(generatedCount) / Double(frameCount)
+                progressHandler(currentProgress)
+            }
         }
         
         guard CGImageDestinationFinalize(destination) else {

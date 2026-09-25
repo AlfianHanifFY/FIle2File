@@ -52,6 +52,14 @@ public struct AppTool: Identifiable, Hashable {
             isAvailable: true
         ),
         AppTool(
+            id: "scan2pdf",
+            name: "Scan to PDF",
+            description: "Refine paper scan photos with contrast filters and combine into a clean PDF document.",
+            icon: "doc.viewfinder.fill",
+            category: .media,
+            isAvailable: true
+        ),
+        AppTool(
             id: "imageToPdf",
             name: "Image to PDF",
             description: "Convert single or multiple images into a structured PDF document.",

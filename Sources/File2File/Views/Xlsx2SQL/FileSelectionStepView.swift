@@ -75,10 +75,11 @@ public struct FileSelectionStepView: View {
                         }
 
                         Button(action: selectFileWithDialog) {
-                            Label("Browse Files...", systemImage: "folder")
+                            Label("Browse", systemImage: "folder")
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.regular)
+                        .help("Browse files on disk")
                     }
                 }
             }
@@ -153,12 +154,13 @@ public struct FileSelectionStepView: View {
 
                         Button(action: onNextStep) {
                             HStack {
-                                Text("Next: DDL Schema")
+                                Text("Next")
                                 Image(systemName: "chevron.right")
                             }
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.regular)
+                        .help("Proceed to DDL Schema step")
                     }
 
                     Divider()

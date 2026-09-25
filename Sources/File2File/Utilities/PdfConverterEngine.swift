@@ -8,19 +8,13 @@ public enum PdfConverterEngine {
     // MARK: - Load Helpers
     
     public static func loadImageItem(from url: URL) -> ImageToPdfItem? {
-        guard let image = NSImage(contentsOf: url) else { return nil }
-        let sizeBytes: Int64
-        if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
-           let sz = attrs[.size] as? Int64 {
-            sizeBytes = sz
-        } else {
-            sizeBytes = 0
-        }
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        let sizeBytes = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? 0
         return ImageToPdfItem(
             url: url,
             name: url.lastPathComponent,
             originalSize: sizeBytes,
-            image: image
+            image: nil
         )
     }
     

@@ -49,6 +49,16 @@ public struct PdfConverterToolView: View {
                 imageToPdfView
             case .pdfToImage:
                 pdfToImageView
+            case .pdfToWord:
+                FileDropZoneCardView(
+                    title: "Drag & Drop PDF File(s) Here",
+                    subtitle: "Convert PDF documents into editable Word (.docx) files.",
+                    iconName: "doc.text.fill",
+                    buttonTitle: "Browse",
+                    onBrowse: {},
+                    onDropFiles: { _ in }
+                )
+                .padding(24)
             case .mergePdf, .splitPdf:
                 mergePdfView
             case .signPdf:
@@ -63,6 +73,7 @@ public struct PdfConverterToolView: View {
         switch mode {
         case .imageToPdf: return "doc.richtext"
         case .pdfToImage: return "doc.viewfinder"
+        case .pdfToWord: return "doc.text.fill"
         case .mergePdf: return "doc.on.doc"
         case .splitPdf: return "scissors"
         case .signPdf: return "signature"
@@ -73,6 +84,7 @@ public struct PdfConverterToolView: View {
         switch mode {
         case .imageToPdf: return "Image to PDF Converter"
         case .pdfToImage: return "PDF to Image Converter"
+        case .pdfToWord: return "PDF to Word Converter"
         case .mergePdf: return "Merge PDF Documents"
         case .splitPdf: return "PDF Splitter & Page Extractor"
         case .signPdf: return "PDF Signer"
@@ -83,6 +95,7 @@ public struct PdfConverterToolView: View {
         switch mode {
         case .imageToPdf: return "Combine multiple images into clean PDF documents or export individual PDFs."
         case .pdfToImage: return "Extract high-resolution images from PDF pages with full DPI control."
+        case .pdfToWord: return "Convert PDF documents into editable Word (.docx) files."
         case .mergePdf: return "Combine multiple PDF files into a single structured PDF document."
         case .splitPdf: return "Extract ranges, split into single pages, or chunk PDF documents."
         case .signPdf: return "Add visual signature overlays or PKCS#12 digital certificate signatures to PDF documents."
@@ -107,13 +120,6 @@ public struct PdfConverterToolView: View {
             }
             
             Spacer()
-            
-            Picker("Mode", selection: $mode) {
-                ForEach(PdfConverterMode.allCases) { m in
-                    Text(m.rawValue).tag(m)
-                }
-            }
-            .pickerStyle(.segmented)
             .frame(width: 440)
         }
         .padding(.horizontal, 20)
@@ -288,19 +294,21 @@ public struct PdfConverterToolView: View {
             Spacer()
             
             Button(action: triggerImageToPdfConversion) {
-                Label("Convert to PDF", systemImage: "doc.badge.plus")
+                Label("Convert", systemImage: "doc.badge.plus")
                     .font(.headline)
             }
             .buttonStyle(.borderedProminent)
             .disabled(isProcessingImages || imageItems.isEmpty)
+            .help("Convert images to PDF")
             
             if !generatedPdfResults.isEmpty {
                 Button(action: savePdfResults) {
-                    Label("Save PDF File(s)...", systemImage: "square.and.arrow.down")
+                    Label("Save", systemImage: "square.and.arrow.down")
                         .font(.headline)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.green)
+                .help("Save generated PDF files")
             }
         }
     }
@@ -473,8 +481,9 @@ public struct PdfConverterToolView: View {
                 
                 Spacer()
                 
-                Button("Change PDF", action: openPdfPicker)
+                Button("Change", action: openPdfPicker)
                     .font(.caption)
+                    .help("Change selected PDF")
             }
             .padding(12)
             
@@ -563,16 +572,18 @@ public struct PdfConverterToolView: View {
             
             if let selId = selectedPageId, let selectedPage = renderedPages.first(where: { $0.id == selId }) {
                 Button(action: { saveSinglePage(selectedPage) }) {
-                    Label("Save Page \(selectedPage.pageNumber)...", systemImage: "square.and.arrow.down")
+                    Label("Save", systemImage: "square.and.arrow.down")
                 }
+                .help("Save selected page image")
             }
             
             if !renderedPages.isEmpty {
                 Button(action: saveAllPages) {
-                    Label("Save All Pages (\(renderedPages.count))...", systemImage: "folder.badge.plus")
+                    Label("Save", systemImage: "folder.badge.plus")
                         .font(.headline)
                 }
                 .buttonStyle(.borderedProminent)
+                .help("Save all rendered page images")
             }
         }
     }
@@ -591,10 +602,11 @@ public struct PdfConverterToolView: View {
             Spacer()
             
             Button(action: triggerPdfToImageConversion) {
-                Label("Render Pages", systemImage: "arrow.clockwise")
+                Label("Render", systemImage: "arrow.clockwise")
             }
             .buttonStyle(.bordered)
             .disabled(isProcessingPdf || pdfItem == nil)
+            .help("Render PDF pages as images")
         }
         .padding(14)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.windowBackgroundColor)))

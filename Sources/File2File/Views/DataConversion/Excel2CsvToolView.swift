@@ -55,8 +55,9 @@ public struct Excel2CsvToolView: View {
 
             if fileData != nil {
                 Button(action: resetFile) {
-                    Label("Change File", systemImage: "arrow.triangle.2.circlepath")
+                    Label("Change", systemImage: "arrow.triangle.2.circlepath")
                 }
+                .help("Change source file")
             }
         }
         .padding(.horizontal, 20)
@@ -207,7 +208,7 @@ public struct Excel2CsvToolView: View {
                             .controlSize(.small)
                     } else {
                         Image(systemName: "square.and.arrow.down")
-                        Text("Export CSV File")
+                        Text("Export")
                             .fontWeight(.semibold)
                     }
                     Spacer()
@@ -216,6 +217,7 @@ public struct Excel2CsvToolView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(isProcessing || fileData == nil)
+            .help("Export CSV file to disk")
         }
     }
 
@@ -230,10 +232,11 @@ public struct Excel2CsvToolView: View {
                 Spacer()
 
                 Button(action: copyToClipboard) {
-                    Label(isCopied ? "Copied!" : "Copy CSV", systemImage: isCopied ? "checkmark" : "doc.on.doc")
+                    Label(isCopied ? "Copied!" : "Copy", systemImage: isCopied ? "checkmark" : "doc.on.doc")
                         .font(.caption)
                 }
                 .disabled(csvPreview.isEmpty)
+                .help("Copy CSV preview to clipboard")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)

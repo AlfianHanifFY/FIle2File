@@ -235,3 +235,123 @@ public struct DDLParser {
         return "TEXT"
     }
 }
+
+public enum SQLValidationError: LocalizedError, Equatable {
+    case unclosedSingleQuote
+    case unclosedDoubleQuote
+    case unclosedDollarQuote
+    case unclosedParenthesis
+    case unrecognizedCommand(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .unclosedSingleQuote:
+            return "Unclosed single quote (') found in SQL statement."
+        case .unclosedDoubleQuote:
+            return "Unclosed double quote (\") found in SQL statement."
+        case .unclosedDollarQuote:
+            return "Unclosed dollar quote ($$) found in SQL block."
+        case .unclosedParenthesis:
+            return "Unclosed parenthesis '(' in SQL statement."
+        case .unrecognizedCommand(let verb):
+            return "Unrecognized SQL command verb '\(verb)'."
+        }
+    }
+}
+
+public struct SQLValidator {
+    private static let validVerbs: Set<String> = [
+        "SET", "RESET", "TRUNCATE", "DROP", "CREATE", "ALTER", "INSERT", "UPDATE", "DELETE",
+        "GRANT", "REVOKE", "SELECT", "VACUUM", "ANALYZE", "BEGIN", "COMMIT", "END", "ROLLBACK",
+        "COMMENT", "DO", "CALL", "EXPLAIN", "REINDEX", "LOCK", "SAVEPOINT", "RELEASE",
+        "NOTIFY", "LISTEN", "UNLISTEN", "PREPARE", "EXECUTE", "DEALLOCATE"
+    ]
+
+    public static func validateSQL(_ sql: String) -> Result<Void, SQLValidationError> {
+        let trimmed = sql.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return .success(()) }
+
+        // Normalize typography quotes
+        var cleaned = sql
+        cleaned = cleaned.replacingOccurrences(of: "[“”]", with: "\"", options: .regularExpression)
+        cleaned = cleaned.replacingOccurrences(of: "[‘’]", with: "'", options: .regularExpression)
+
+        // Strip comments
+        cleaned = cleaned.replacingOccurrences(of: "(?m)--.*$", with: "", options: .regularExpression)
+        cleaned = cleaned.replacingOccurrences(of: "/\\*[\\s\\S]*?\\*/", with: "", options: .regularExpression)
+        cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !cleaned.isEmpty else { return .success(()) }
+
+        // Scan characters for quotes and parenthesis balance
+        var inSingleQuote = false
+        var inDoubleQuote = false
+        var inDollarQuote = false
+        var parenDepth = 0
+
+        let chars = Array(cleaned)
+        var idx = 0
+        while idx < chars.count {
+            let ch = chars[idx]
+            
+            if !inDoubleQuote && !inDollarQuote && ch == "'" {
+                if inSingleQuote && idx + 1 < chars.count && chars[idx + 1] == "'" {
+                    idx += 2
+                    continue
+                }
+                inSingleQuote.toggle()
+                idx += 1
+                continue
+            }
+            
+            if !inSingleQuote && !inDollarQuote && ch == "\"" {
+                inDoubleQuote.toggle()
+                idx += 1
+                continue
+            }
+            
+            if !inSingleQuote && !inDoubleQuote && ch == "$" {
+                if idx + 1 < chars.count && chars[idx + 1] == "$" {
+                    inDollarQuote.toggle()
+                    idx += 2
+                    continue
+                }
+            }
+
+            if !inSingleQuote && !inDoubleQuote && !inDollarQuote {
+                if ch == "(" {
+                    parenDepth += 1
+                } else if ch == ")" {
+                    parenDepth -= 1
+                    if parenDepth < 0 {
+                        return .failure(.unclosedParenthesis)
+                    }
+                }
+            }
+
+            idx += 1
+        }
+
+        if inSingleQuote { return .failure(.unclosedSingleQuote) }
+        if inDoubleQuote { return .failure(.unclosedDoubleQuote) }
+        if inDollarQuote { return .failure(.unclosedDollarQuote) }
+        if parenDepth != 0 { return .failure(.unclosedParenthesis) }
+
+        // Validate statement starting verbs (split by semicolon ;)
+        let rawStatements = cleaned.components(separatedBy: ";")
+        for stmt in rawStatements {
+            let stmtTrimmed = stmt.trimmingCharacters(in: .whitespacesAndNewlines)
+            if stmtTrimmed.isEmpty { continue }
+
+            let components = stmtTrimmed.components(separatedBy: CharacterSet.whitespacesAndNewlines).filter { !$0.isEmpty }
+            guard let firstWord = components.first?.uppercased() else { continue }
+            let cleanFirstWord = firstWord.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+
+            if !cleanFirstWord.isEmpty && !validVerbs.contains(cleanFirstWord) {
+                return .failure(.unrecognizedCommand(cleanFirstWord))
+            }
+        }
+
+        return .success(())
+    }
+}

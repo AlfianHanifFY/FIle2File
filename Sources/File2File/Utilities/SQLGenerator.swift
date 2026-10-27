@@ -36,6 +36,12 @@ public struct SQLGenerator {
         sqlLines.append("-- Generated At: \(formatter.string(from: Date()))")
         sqlLines.append("")
 
+        if let before = options.beforeProcess?.trimmingCharacters(in: .whitespacesAndNewlines), !before.isEmpty {
+            sqlLines.append("-- Before Process")
+            sqlLines.append(before)
+            sqlLines.append("")
+        }
+
         if options.includeCreateTable {
             sqlLines.append("-- Table Definition")
             let ddlStatement = resolveCreateTableDDL(tableName: tableName, mappings: activeMappings, ddlText: ddlText)
@@ -47,12 +53,19 @@ public struct SQLGenerator {
             sqlLines.append("COPY \"\(tableName)\" (\(columnsList)) FROM STDIN WITH (FORMAT text, NULL '\\N');")
             for row in rows {
                 let copyRow = activeMappings
-                    .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
+                    .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m, row: row) }
                     .joined(separator: "\t")
                 sqlLines.append(copyRow)
             }
             sqlLines.append("\\.")
             sqlLines.append("")
+
+            if let after = options.afterProcess?.trimmingCharacters(in: .whitespacesAndNewlines), !after.isEmpty {
+                sqlLines.append("-- After Process")
+                sqlLines.append(after)
+                sqlLines.append("")
+            }
+
             return GenerationResult(sql: sqlLines.joined(separator: "\n"), totalBatches: 1, totalRowsProcessed: rows.count)
         }
 
@@ -68,7 +81,7 @@ public struct SQLGenerator {
 
             let valuesBlock = chunk.map { row in
                 let vals = activeMappings
-                    .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
+                    .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m, row: row) }
                     .joined(separator: ", ")
                 return "  (\(vals))"
             }.joined(separator: ",\n")
@@ -82,6 +95,12 @@ public struct SQLGenerator {
             sqlLines.append("")
             
             i += batchSize
+        }
+
+        if let after = options.afterProcess?.trimmingCharacters(in: .whitespacesAndNewlines), !after.isEmpty {
+            sqlLines.append("-- After Process")
+            sqlLines.append(after)
+            sqlLines.append("")
         }
 
         return GenerationResult(sql: sqlLines.joined(separator: "\n"), totalBatches: batchCount, totalRowsProcessed: rows.count)
@@ -144,6 +163,13 @@ public struct SQLGenerator {
         }
         writeString(headerLines.joined(separator: "\n") + "\n")
 
+        if let before = options.beforeProcess?.trimmingCharacters(in: .whitespacesAndNewlines), !before.isEmpty {
+            var beforeBlock = "-- Before Process\n"
+            beforeBlock += before
+            beforeBlock += "\n\n"
+            writeString(beforeBlock)
+        }
+
         if options.includeCreateTable {
             var ddlBlock = "-- Table Definition\n"
             ddlBlock += resolveCreateTableDDL(tableName: tableName, mappings: activeMappings, ddlText: ddlText)
@@ -162,7 +188,7 @@ public struct SQLGenerator {
                 chunkLines.reserveCapacity(chunk.count)
                 for row in chunk {
                     let copyRow = activeMappings
-                        .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
+                        .map { m in formatCopyValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m, row: row) }
                         .joined(separator: "\t")
                     chunkLines.append(copyRow)
                 }
@@ -172,7 +198,7 @@ public struct SQLGenerator {
                 progress?(totalRowsProcessed, fileData.totalRows)
             }
 
-            writeString("\\.\n")
+            writeString("\\.\n\n")
         } else {
             let batchSize = max(1, options.batchSize)
             try FileParser.streamBatches(from: fileData, batchSize: batchSize) { chunk, batchIdx in
@@ -182,7 +208,7 @@ public struct SQLGenerator {
 
                 let valuesBlock = chunk.map { row in
                     let vals = activeMappings
-                        .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m) }
+                        .map { m in formatSqlValue(m.isCustomValue ? m.customValue : row[m.excelHeader], mapping: m, row: row) }
                         .joined(separator: ", ")
                     return "  (\(vals))"
                 }.joined(separator: ",\n")
@@ -200,15 +226,26 @@ public struct SQLGenerator {
             }
         }
 
+        if let after = options.afterProcess?.trimmingCharacters(in: .whitespacesAndNewlines), !after.isEmpty {
+            var afterBlock = "-- After Process\n"
+            afterBlock += after
+            afterBlock += "\n\n"
+            writeString(afterBlock)
+        }
+
         flushBuffer()
         return GenerationResult(sql: "", totalBatches: totalBatches, totalRowsProcessed: totalRowsProcessed)
     }
 
-    private static func formatSqlValue(_ rawVal: String?, mapping: ColumnMapping) -> String {
+    private static func formatSqlValue(_ rawVal: String?, mapping: ColumnMapping, row: [String: String]? = nil) -> String {
         guard let rawVal = rawVal else {
             return mapping.isCustomValue ? "NULL" : resolveNullOrEmpty(mapping: mapping)
         }
-        let strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
+        var strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if strVal.contains("${"), let row = row {
+            strVal = resolveColumnVariables(template: strVal, row: row)
+        }
 
         let nullStrings = ["", "null", "n/a", "none", "nan"]
         if nullStrings.contains(strVal.lowercased()) {
@@ -220,15 +257,9 @@ public struct SQLGenerator {
             return upper
         }
 
-        // Handle user-specified custom literal
+        // Handle user-specified custom literal or raw SQL expression
         if mapping.isCustomValue {
-            if strVal.hasPrefix("'") && strVal.hasSuffix("'") && strVal.count >= 2 {
-                let unquoted = String(strVal.dropFirst().dropLast())
-                return "'\(escapeString(unquoted))'"
-            }
-            if ["now()", "current_timestamp", "current_date"].contains(strVal.lowercased()) {
-                return strVal.uppercased()
-            }
+            return strVal
         }
 
         let type = mapping.sqlType.uppercased()
@@ -290,11 +321,14 @@ public struct SQLGenerator {
         return "NULL"
     }
 
-    private static func formatCopyValue(_ rawVal: String?, mapping: ColumnMapping) -> String {
+    private static func formatCopyValue(_ rawVal: String?, mapping: ColumnMapping, row: [String: String]? = nil) -> String {
         guard let rawVal = rawVal else {
             return resolveCopyNullOrEmpty(mapping: mapping)
         }
-        let strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
+        var strVal = rawVal.trimmingCharacters(in: .whitespacesAndNewlines)
+        if strVal.contains("${"), let row = row {
+            strVal = resolveColumnVariables(template: strVal, row: row)
+        }
         if strVal.isEmpty || strVal.lowercased() == "null" {
             return resolveCopyNullOrEmpty(mapping: mapping)
         }
@@ -399,5 +433,24 @@ public struct SQLGenerator {
         }
 
         return nil
+    }
+
+    public static func resolveColumnVariables(template: String, row: [String: String]) -> String {
+        var result = template
+        let pattern = "\\$\\{([^\\}]+)\\}"
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+            return template
+        }
+        let nsString = template as NSString
+        let matches = regex.matches(in: template, options: [], range: NSRange(location: 0, length: nsString.length))
+
+        for match in matches.reversed() {
+            let varRange = match.range(at: 1)
+            let fullRange = match.range(at: 0)
+            let colName = nsString.substring(with: varRange).trimmingCharacters(in: .whitespacesAndNewlines)
+            let replacement = row[colName] ?? ""
+            result = (result as NSString).replacingCharacters(in: fullRange, with: replacement)
+        }
+        return result
     }
 }

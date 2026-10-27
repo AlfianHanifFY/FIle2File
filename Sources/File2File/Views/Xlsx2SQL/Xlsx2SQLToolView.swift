@@ -4,6 +4,8 @@ public struct Xlsx2SQLToolView: View {
     @State private var currentStep: Int = 1
     @State private var fileData: FileData? = nil
     @State private var ddlText: String = ""
+    @State private var beforeProcessText: String = ""
+    @State private var afterProcessText: String = ""
     @State private var parsedSchema: ParsedSchema? = nil
     @State private var columnMappings: [ColumnMapping] = []
 
@@ -49,6 +51,8 @@ public struct Xlsx2SQLToolView: View {
                     case 2:
                         SchemaInputStepView(
                             ddlText: $ddlText,
+                            beforeProcessText: $beforeProcessText,
+                            afterProcessText: $afterProcessText,
                             fileData: fileData,
                             onSchemaParsed: { schema, ddl in
                                 parsedSchema = schema
@@ -101,6 +105,8 @@ public struct Xlsx2SQLToolView: View {
                                 mappings: columnMappings,
                                 fileData: file,
                                 ddlText: ddlText,
+                                beforeProcessText: beforeProcessText,
+                                afterProcessText: afterProcessText,
                                 onPrevStep: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         currentStep = 3
@@ -142,6 +148,8 @@ public struct Xlsx2SQLToolView: View {
             currentStep = 1
             fileData = nil
             ddlText = ""
+            beforeProcessText = ""
+            afterProcessText = ""
             parsedSchema = nil
             columnMappings = []
         }

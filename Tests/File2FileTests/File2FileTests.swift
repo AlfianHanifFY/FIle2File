@@ -59,14 +59,114 @@ final class File2FileTests: XCTestCase {
         XCTAssertTrue(result.sql.contains("('Alice', 30)"))
     }
 
+    func testBeforeAndAfterProcessSQLAndDefaultCreateTable() throws {
+        let mappings = [
+            ColumnMapping(sqlColumn: "id", sqlType: "INTEGER", isNullable: false, excelHeader: "ID"),
+            ColumnMapping(sqlColumn: "username", sqlType: "VARCHAR", isNullable: true, excelHeader: "Username")
+        ]
+        let rows = [
+            ["ID": "1", "Username": "user1"]
+        ]
+
+        var options = GeneratorOptions() // Default includeCreateTable should be true now!
+        XCTAssertTrue(options.includeCreateTable)
+
+        options.beforeProcess = "TRUNCATE TABLE users;\nSET search_path TO public;"
+        options.afterProcess = "CREATE INDEX idx_users_username ON users(username);\nANALYZE users;"
+
+        let result = SQLGenerator.generateSQL(tableName: "users", mappings: mappings, rows: rows, options: options)
+        
+        // Assert ordering: Header -> Before Process -> CREATE TABLE -> INSERT -> After Process
+        let sql = result.sql
+        XCTAssertTrue(sql.contains("-- Before Process"))
+        XCTAssertTrue(sql.contains("TRUNCATE TABLE users;"))
+        XCTAssertTrue(sql.contains("CREATE TABLE IF NOT EXISTS \"users\""))
+        XCTAssertTrue(sql.contains("INSERT INTO \"users\""))
+        XCTAssertTrue(sql.contains("-- After Process"))
+        XCTAssertTrue(sql.contains("CREATE INDEX idx_users_username ON users(username);"))
+
+        let beforeIdx = sql.range(of: "-- Before Process")!.lowerBound
+        let createIdx = sql.range(of: "CREATE TABLE IF NOT EXISTS")!.lowerBound
+        let insertIdx = sql.range(of: "INSERT INTO")!.lowerBound
+        let afterIdx = sql.range(of: "-- After Process")!.lowerBound
+
+        XCTAssertTrue(beforeIdx < createIdx)
+        XCTAssertTrue(createIdx < insertIdx)
+        XCTAssertTrue(insertIdx < afterIdx)
+    }
+
+    func testSQLValidator() throws {
+        // Empty / optional is valid
+        if case .failure(let err) = SQLValidator.validateSQL("") {
+            XCTFail("Expected success for empty SQL but got error: \(err)")
+        }
+        if case .failure(let err) = SQLValidator.validateSQL("-- Just a comment") {
+            XCTFail("Expected success for comment SQL but got error: \(err)")
+        }
+
+        // Valid PostgreSQL statements
+        let validSQL = """
+        -- Setup session
+        SET search_path TO public;
+        TRUNCATE TABLE users;
+        CREATE INDEX idx_user ON users(name);
+        """
+        if case .failure(let err) = SQLValidator.validateSQL(validSQL) {
+            XCTFail("Expected success for valid SQL but got error: \(err)")
+        }
+
+        // Unclosed single quote
+        let unclosedQuote = "INSERT INTO users VALUES('john"
+        if case .failure(let err) = SQLValidator.validateSQL(unclosedQuote) {
+            XCTAssertEqual(err, .unclosedSingleQuote)
+        } else {
+            XCTFail("Expected unclosedSingleQuote error")
+        }
+
+        // Unclosed parenthesis
+        let unclosedParen = "CREATE INDEX idx ON users(name"
+        if case .failure(let err) = SQLValidator.validateSQL(unclosedParen) {
+            XCTAssertEqual(err, .unclosedParenthesis)
+        } else {
+            XCTFail("Expected unclosedParenthesis error")
+        }
+
+        // Unrecognized command verb
+        let invalidVerb = "INVALID_COMMAND foo bar;"
+        if case .failure(let err) = SQLValidator.validateSQL(invalidVerb) {
+            XCTAssertEqual(err, .unrecognizedCommand("INVALID_COMMAND"))
+        } else {
+            XCTFail("Expected unrecognizedCommand error")
+        }
+    }
+
+    func testRawCustomValuesAndColumnVariables() throws {
+        let mappings = [
+            ColumnMapping(sqlColumn: "user_id", sqlType: "INTEGER", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "(select t_account_id from t_account where account_no='${account_no}')"),
+            ColumnMapping(sqlColumn: "status", sqlType: "VARCHAR", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "active"),
+            ColumnMapping(sqlColumn: "quoted_status", sqlType: "VARCHAR", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "'active'")
+        ]
+        let rows = [
+            ["account_no": "ACC_1001"]
+        ]
+        let options = GeneratorOptions(batchSize: 500, includeCreateTable: false)
+
+        let result = SQLGenerator.generateSQL(tableName: "transactions", mappings: mappings, rows: rows, options: options)
+        
+        // Assert raw output: no automatic single quotes added around raw expressions or active
+        XCTAssertTrue(result.sql.contains("(select t_account_id from t_account where account_no='ACC_1001')"))
+        XCTAssertTrue(result.sql.contains(", active, "))
+        XCTAssertTrue(result.sql.contains("'active'"))
+    }
+
     func testCustomTypedValuesForMissingDDLColumns() throws {
         // DDL has 4 columns: name, age, status, created_by
         // File only has 2 columns: "Full Name", "Age"
         let mappings = [
             ColumnMapping(sqlColumn: "name", sqlType: "VARCHAR", isNullable: false, excelHeader: "Full Name"),
             ColumnMapping(sqlColumn: "age", sqlType: "INTEGER", isNullable: true, excelHeader: "Age"),
-            ColumnMapping(sqlColumn: "status", sqlType: "VARCHAR", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "ACTIVE"),
-            ColumnMapping(sqlColumn: "created_by", sqlType: "VARCHAR", isNullable: true, excelHeader: ColumnMapping.customValueIdentifier, customValue: "system_import"),
+            ColumnMapping(sqlColumn: "status", sqlType: "VARCHAR", isNullable: false, excelHeader: ColumnMapping.customValueIdentifier, customValue: "'ACTIVE'"),
+            ColumnMapping(sqlColumn: "created_by", sqlType: "VARCHAR", isNullable: true, excelHeader: ColumnMapping.customValueIdentifier, customValue: "'system_import'"),
             ColumnMapping(sqlColumn: "omitted_col", sqlType: "TEXT", isNullable: true, excelHeader: "") // Left unmapped
         ]
         let rows = [

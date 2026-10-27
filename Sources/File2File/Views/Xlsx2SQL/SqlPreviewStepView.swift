@@ -6,6 +6,8 @@ public struct SqlPreviewStepView: View {
     let mappings: [ColumnMapping]
     let fileData: FileData
     var ddlText: String = ""
+    var beforeProcessText: String = ""
+    var afterProcessText: String = ""
     let onPrevStep: () -> Void
 
     private var activeMappedColumnsCount: Int {
@@ -231,6 +233,8 @@ public struct SqlPreviewStepView: View {
     private func generate() {
         var currentOptions = options
         currentOptions.customDescription = settings.customDescription
+        currentOptions.beforeProcess = beforeProcessText
+        currentOptions.afterProcess = afterProcessText
 
         let result = SQLGenerator.generateSQL(
             tableName: tableName,
@@ -283,6 +287,8 @@ public struct SqlPreviewStepView: View {
 
         var currentOptions = options
         currentOptions.customDescription = settings.customDescription
+        currentOptions.beforeProcess = beforeProcessText
+        currentOptions.afterProcess = afterProcessText
 
         DispatchQueue.global(qos: .userInitiated).async {
             do {

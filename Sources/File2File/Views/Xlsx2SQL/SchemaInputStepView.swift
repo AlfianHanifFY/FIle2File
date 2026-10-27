@@ -2,12 +2,16 @@ import SwiftUI
 
 public struct SchemaInputStepView: View {
     @Binding var ddlText: String
+    @Binding var beforeProcessText: String
+    @Binding var afterProcessText: String
     let fileData: FileData?
     let onSchemaParsed: (ParsedSchema, String) -> Void
     let onNextStep: () -> Void
     let onPrevStep: () -> Void
 
     @State private var validationResult: Result<ParsedSchema, DDLParseError>? = nil
+    @State private var beforeError: String? = nil
+    @State private var afterError: String? = nil
     @State private var isChecked: Bool = false
 
     private var parsedSchema: ParsedSchema? {
@@ -170,6 +174,109 @@ public struct SchemaInputStepView: View {
                 .background(RoundedRectangle(cornerRadius: 10).fill(Color.secondary.opacity(0.06)))
             }
 
+            // Before & After Process SQL Editors
+            HStack(alignment: .top, spacing: 14) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("BEFORE PROCESS SQL (OPTIONAL)")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        if !beforeProcessText.isEmpty {
+                            Button("Clear") {
+                                beforeProcessText = ""
+                                performCheck()
+                            }
+                            .font(.caption2)
+                            .buttonStyle(.plain)
+                            .foregroundColor(.secondary)
+                        }
+                    }
+
+                    TextEditor(text: $beforeProcessText)
+                        .font(.system(.body, design: .monospaced))
+                        .padding(6)
+                        .scrollContentBackground(.hidden)
+                        .background(Color(NSColor.textBackgroundColor))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(
+                                    beforeError != nil
+                                        ? Color.orange.opacity(0.8)
+                                        : Color(NSColor.separatorColor).opacity(0.6),
+                                    lineWidth: beforeError != nil ? 1.5 : 1
+                                )
+                        )
+                        .frame(height: 75)
+                        .onChange(of: beforeProcessText) {
+                            performCheck()
+                        }
+
+                    if let err = beforeError {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                            Text(err)
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("AFTER PROCESS SQL (OPTIONAL)")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        if !afterProcessText.isEmpty {
+                            Button("Clear") {
+                                afterProcessText = ""
+                                performCheck()
+                            }
+                            .font(.caption2)
+                            .buttonStyle(.plain)
+                            .foregroundColor(.secondary)
+                        }
+                    }
+
+                    TextEditor(text: $afterProcessText)
+                        .font(.system(.body, design: .monospaced))
+                        .padding(6)
+                        .scrollContentBackground(.hidden)
+                        .background(Color(NSColor.textBackgroundColor))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(
+                                    afterError != nil
+                                        ? Color.orange.opacity(0.8)
+                                        : Color(NSColor.separatorColor).opacity(0.6),
+                                    lineWidth: afterError != nil ? 1.5 : 1
+                                )
+                        )
+                        .frame(height: 75)
+                        .onChange(of: afterProcessText) {
+                            performCheck()
+                        }
+
+                    if let err = afterError {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                            Text(err)
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                }
+            }
+
             // Footer Navigation Bar
             HStack {
                 Button(action: onPrevStep) {
@@ -186,7 +293,7 @@ public struct SchemaInputStepView: View {
 
                 Button(action: {
                     performCheck()
-                    if let schema = parsedSchema {
+                    if let schema = parsedSchema, beforeError == nil, afterError == nil {
                         onSchemaParsed(schema, ddlText)
                         onNextStep()
                     }
@@ -198,7 +305,7 @@ public struct SchemaInputStepView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.regular)
-                .disabled(parsedSchema == nil)
+                .disabled(parsedSchema == nil || beforeError != nil || afterError != nil)
                 .help("Next: Column mapping")
             }
         }
@@ -212,6 +319,21 @@ public struct SchemaInputStepView: View {
 
     private func performCheck() {
         validationResult = DDLParser.validateAndParseDDL(ddlText)
+
+        switch SQLValidator.validateSQL(beforeProcessText) {
+        case .success:
+            beforeError = nil
+        case .failure(let err):
+            beforeError = err.errorDescription ?? err.localizedDescription
+        }
+
+        switch SQLValidator.validateSQL(afterProcessText) {
+        case .success:
+            afterError = nil
+        case .failure(let err):
+            afterError = err.errorDescription ?? err.localizedDescription
+        }
+
         isChecked = true
     }
 }

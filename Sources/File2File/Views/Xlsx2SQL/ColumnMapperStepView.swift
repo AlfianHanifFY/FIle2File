@@ -42,7 +42,7 @@ public struct ColumnMapperStepView: View {
                 Text("SOURCE / FIXED VALUE")
                     .font(.caption2.bold())
                     .foregroundColor(.secondary)
-                    .frame(minWidth: 200, idealWidth: 240, alignment: .leading)
+                    .frame(minWidth: 280, idealWidth: 340, alignment: .leading)
 
                 Spacer()
 
@@ -118,12 +118,46 @@ public struct ColumnMapperStepView: View {
                             .pickerStyle(.menu)
 
                             if mapping.isCustomValue {
-                                TextField("Type fixed value (e.g. 'active', 0, NOW())...", text: $mappings[index].customValue)
-                                    .textFieldStyle(.roundedBorder)
-                                    .font(.system(.caption, design: .monospaced))
+                                VStack(alignment: .leading, spacing: 4) {
+                                    TextEditor(text: $mappings[index].customValue)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .padding(4)
+                                        .scrollContentBackground(.hidden)
+                                        .background(Color(NSColor.textBackgroundColor))
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(Color(NSColor.separatorColor).opacity(0.6), lineWidth: 1)
+                                        )
+                                        .frame(height: 60)
+
+                                    if !fileData.headers.isEmpty {
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack(spacing: 4) {
+                                                Text("Ref:")
+                                                    .font(.system(size: 9))
+                                                    .foregroundColor(.secondary)
+                                                ForEach(fileData.headers, id: \.self) { header in
+                                                    Button(action: {
+                                                        mappings[index].customValue += "${\(header)}"
+                                                    }) {
+                                                        Text("${\(header)}")
+                                                            .font(.system(size: 9, design: .monospaced))
+                                                            .padding(.horizontal, 4)
+                                                            .padding(.vertical, 2)
+                                                            .background(Capsule().fill(Color.accentColor.opacity(0.12)))
+                                                            .foregroundColor(.accentColor)
+                                                    }
+                                                    .buttonStyle(.plain)
+                                                    .help("Insert ${\(header)} reference")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
-                        .frame(minWidth: 200, idealWidth: 240, alignment: .leading)
+                        .frame(minWidth: 280, idealWidth: 340, alignment: .leading)
 
                         Spacer()
 
